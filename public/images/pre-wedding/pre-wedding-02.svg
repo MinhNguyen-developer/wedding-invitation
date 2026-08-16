@@ -1,0 +1,17 @@
+<svg width="1200" height="1500" viewBox="0 0 1200 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1500" fill="#FFF8F0"/>
+  <path d="M0 0H1200V848C1037 764 904 786 754 886C583 1000 379 1044 0 914V0Z" fill="#F7D9DC"/>
+  <circle cx="216" cy="310" r="116" fill="#B9844A" opacity="0.78"/>
+  <path d="M374 756C503 566 701 565 832 756" stroke="#8F3D4F" stroke-width="26" stroke-linecap="round"/>
+  <path d="M392 861C502 764 692 759 822 861" stroke="#71816D" stroke-width="22" stroke-linecap="round"/>
+  <path d="M291 1048C390 928 812 928 912 1048V1500H291V1048Z" fill="#EFE7DA"/>
+  <g fill="#FFFFFF">
+    <circle cx="382" cy="515" r="34"/>
+    <circle cx="444" cy="470" r="28"/>
+    <circle cx="512" cy="514" r="31"/>
+    <circle cx="766" cy="520" r="34"/>
+    <circle cx="826" cy="474" r="29"/>
+    <circle cx="894" cy="517" r="31"/>
+  </g>
+  <text x="600" y="1395" text-anchor="middle" fill="#8F3D4F" font-family="Georgia, serif" font-size="54">Thay bằng ảnh thật</text>
+</svg>

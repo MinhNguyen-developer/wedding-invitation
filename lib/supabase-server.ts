@@ -1,0 +1,26 @@
+import { createClient } from "@supabase/supabase-js";
+
+export type RsvpInsert = {
+  guest_name: string;
+  attendance_status: "attending" | "not_attending";
+  attendee_count: number;
+  message: string | null;
+};
+
+export function createSupabaseServerClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error(
+      "Supabase server environment variables are not configured.",
+    );
+  }
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}

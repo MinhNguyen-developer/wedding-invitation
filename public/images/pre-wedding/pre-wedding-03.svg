@@ -1,0 +1,10 @@
+<svg width="1200" height="1500" viewBox="0 0 1200 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1500" fill="#F3F7ED"/>
+  <path d="M0 1210C198 1128 330 1162 510 1217C732 1285 937 1204 1200 1068V1500H0V1210Z" fill="#8F3D4F"/>
+  <path d="M0 767C155 649 336 626 534 703C772 795 953 740 1200 601V0H0V767Z" fill="#FFF1E6"/>
+  <circle cx="601" cy="527" r="212" fill="#F7D9DC"/>
+  <path d="M470 666C504 606 552 576 614 576C676 576 725 606 758 666" stroke="#252525" stroke-width="23" stroke-linecap="round"/>
+  <path d="M350 916C434 812 766 812 850 916L904 1500H296L350 916Z" fill="#FFFDF8"/>
+  <path d="M420 955C503 1025 701 1025 780 955" stroke="#B9844A" stroke-width="16" stroke-linecap="round"/>
+  <text x="600" y="1395" text-anchor="middle" fill="#FFF8F0" font-family="Georgia, serif" font-size="54">Ảnh cưới sẽ đặt tại đây</text>
+</svg>

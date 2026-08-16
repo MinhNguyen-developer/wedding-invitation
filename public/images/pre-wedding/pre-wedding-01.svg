@@ -1,0 +1,10 @@
+<svg width="1200" height="1500" viewBox="0 0 1200 1500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1500" fill="#F6E7E2"/>
+  <path d="M0 1110C235 1028 393 1116 609 1037C825 958 931 769 1200 835V1500H0V1110Z" fill="#7D8B72"/>
+  <circle cx="886" cy="292" r="162" fill="#E7B58A"/>
+  <path d="M329 1015C361 817 448 703 596 686C744 669 862 790 884 1015" stroke="#8F3D4F" stroke-width="34" stroke-linecap="round"/>
+  <path d="M466 676C466 609 520 555 587 555C654 555 708 609 708 676" stroke="#252525" stroke-width="24" stroke-linecap="round"/>
+  <path d="M408 1072H792L742 1500H458L408 1072Z" fill="#FFF8F0"/>
+  <path d="M414 1090C484 1150 696 1152 788 1090" stroke="#B9844A" stroke-width="18" stroke-linecap="round"/>
+  <text x="600" y="1395" text-anchor="middle" fill="#8F3D4F" font-family="Georgia, serif" font-size="54">Ảnh tạm thay thế</text>
+</svg>
