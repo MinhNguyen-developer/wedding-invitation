@@ -11,8 +11,8 @@ export default function Home() {
       <main>
         <InvitationSection />
         <VenueSection />
-        <PhotoGallery />
         <RsvpForm />
+        <PhotoGallery />
       </main>
       <footer className="border-t border-rosewood/10 py-8 text-center text-sm text-ink/65">
         <p>Cảm ơn bạn đã là một phần trong ngày hạnh phúc của Minh & Hà.</p>
