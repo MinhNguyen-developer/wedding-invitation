@@ -20,10 +20,10 @@ The website keeps its custom RSVP form and server-side validation. The `/api/rsv
    GOOGLE_SHEETS_SPREADSHEET_ID=your-spreadsheet-id
    GOOGLE_SHEETS_SHEET_NAME=RSVP
    GOOGLE_SERVICE_ACCOUNT_EMAIL=service-account@your-project.iam.gserviceaccount.com
-   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+   GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n
    ```
 
-   Use the `client_email` and `private_key` values from the downloaded service-account JSON. Keep the private key in the environment settings only; never commit it or add a `NEXT_PUBLIC_` prefix. The application converts escaped `\n` sequences in the private key to line breaks.
+   Use the `client_email` and `private_key` values from the downloaded service-account JSON. Store the private key without wrapping quotes in both `.env.local` and Vercel. Keep it in environment settings only; never commit it or add a `NEXT_PUBLIC_` prefix. The application normalizes escaped newlines and strips accidental surrounding quotes without logging the key.
 
 The server appends values to the configured tab using the Sheets API [`spreadsheets.values.append`](https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/append) method. The stored status is a readable Vietnamese label, and the timestamp uses Vietnam time (GMT+7) in `HH:mm DD-MM-YYYY` format.
 

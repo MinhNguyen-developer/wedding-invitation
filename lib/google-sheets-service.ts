@@ -16,6 +16,33 @@ function requiredEnv(name: string): string {
   return value;
 }
 
+function normalizePrivateKey(value: string): string {
+  let privateKey = value.trim();
+
+  if (
+    (privateKey.startsWith('"') && privateKey.endsWith('"')) ||
+    (privateKey.startsWith("'") && privateKey.endsWith("'"))
+  ) {
+    privateKey = privateKey.slice(1, -1);
+  }
+
+  privateKey = privateKey
+    .replace(/\\+r\\+n|\\+n/g, "\n")
+    .replace(/\r\n/g, "\n")
+    .trim();
+
+  if (
+    !privateKey.startsWith("-----BEGIN PRIVATE KEY-----") ||
+    !privateKey.includes("-----END PRIVATE KEY-----")
+  ) {
+    throw new Error(
+      "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY must contain the PEM private_key from the service account JSON.",
+    );
+  }
+
+  return privateKey;
+}
+
 function getSheetRange(sheetName: string): string {
   const escapedSheetName = sheetName.replaceAll("'", "''");
   return `'${escapedSheetName}'!A:E`;
@@ -43,9 +70,8 @@ export async function appendRsvpResponse(input: GoogleSheetsRsvp) {
   const spreadsheetId = requiredEnv("GOOGLE_SHEETS_SPREADSHEET_ID");
   const sheetName = requiredEnv("GOOGLE_SHEETS_SHEET_NAME");
   const clientEmail = requiredEnv("GOOGLE_SERVICE_ACCOUNT_EMAIL");
-  const privateKey = requiredEnv("GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY").replace(
-    /\\n/g,
-    "\n",
+  const privateKey = normalizePrivateKey(
+    requiredEnv("GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY"),
   );
 
   const auth = new google.auth.GoogleAuth({
