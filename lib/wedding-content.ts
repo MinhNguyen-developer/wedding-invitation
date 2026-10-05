@@ -9,11 +9,11 @@ export const GALLERY_STORAGE_PUBLIC_BASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_STORAGE_PUBLIC_BASE_URL;
 
 export const weddingContent = {
-  coupleNames: "Minh & Hà",
+  coupleNames: "Quốc Minh & Nhật Hà",
   brideName: "Hà",
   groomName: "Minh",
   invitationMessage:
-    "Trân trọng kính mời gia đình và bạn bè thân thương đến chung vui trong ngày hạnh phúc của chúng mình.",
+    "Ngày vui của chúng con sẽ thật trọn vẹn và ý nghĩa hơn nếu có sự hiện diện của ông bà, bố mẹ, người thân và những người bạn mà chúng con luôn yêu quý.\n\nThân mời mọi người đến chung vui, và cùng chúng con lưu lại những khoảnh khắc thật vui trong ngày đặc biệt này nhé!",
   weddingDate: "Thứ 7, 23 tháng 01 năm 2027",
   weddingTime: "10:30",
   venueName: "Promes Center",

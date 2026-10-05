@@ -9,15 +9,18 @@ const config: Config = {
         rosewood: "#8f3d4f",
         petal: "#f7d9dc",
         ivory: "#fffaf2",
-        sage: "#71816d",
-        gold: "#b9844a"
+        sage: "#667562",
+        gold: "#76512f",
+        paper: "#fffdf9",
+        sand: "#f4ece4"
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
         display: ["var(--font-display)", "Georgia", "serif"]
       },
       boxShadow: {
-        soft: "0 18px 60px rgb(55 35 33 / 0.12)"
+        soft: "0 16px 44px rgb(55 35 33 / 0.09)",
+        card: "0 28px 80px rgb(55 35 33 / 0.14)"
       }
     }
   },

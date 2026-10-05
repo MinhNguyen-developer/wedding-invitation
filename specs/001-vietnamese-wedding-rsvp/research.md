@@ -58,18 +58,19 @@
 - Direct browser-to-storage writes: simpler, but requires very careful public permissions and offers less control over throttling/spam checks.
 - Full backend service: rejected because it adds deployment and maintenance work without enough benefit.
 
-## Decision: Supabase managed Postgres for RSVP storage and review
+## Decision: Direct Google Sheets API for RSVP storage and review
 
-**Rationale**: RSVP responses are structured records and fit naturally in a relational table. Supabase also gives the couple a ready-made dashboard for reviewing responses, satisfying the spec without a custom admin dashboard.
+**Rationale**: The couple wants to review structured RSVP responses in a spreadsheet while guests keep the site's custom form. The Next.js route preserves validation and spam checks, then uses a server-only service account with the Sheets API `spreadsheets.values.append` method. The spreadsheet remains private and is shared with the service account; Google credentials are never exposed to browser code. A dedicated RSVP tab keeps the new rows and their columns easy to review.
 
 **Alternatives considered**:
-- Google Sheets: very simple, but less suitable for controlled validation and write-only guest access.
+- Apps Script Web App: no longer needed because the Next.js server can call the supported Sheets API directly.
 - Firebase/Firestore: viable, but document storage is less natural for tabular RSVP review.
+- Supabase Postgres: historical RSVP rows remain available, but new submissions are written to Google Sheets.
 - Self-hosted database: rejected because the project should minimize operations.
 
 ## Decision: Supabase Storage bucket for pre-wedding images
 
-**Rationale**: The couple wants pre-wedding images stored in Supabase rather than bundled as static project files. Using a managed storage bucket keeps RSVP data and wedding media in one provider, lets the image set be replaced before launch without code asset churn, and avoids making the repository carry large photo files.
+**Rationale**: The couple wants pre-wedding images stored in Supabase rather than bundled as static project files. A managed storage bucket lets the image set be replaced before launch without code asset churn and avoids making the repository carry large photo files. RSVP submissions are handled separately by Google Sheets.
 
 **Alternatives considered**:
 - Bundled public assets: simplest for local development, but every photo replacement changes the app bundle and repository.
@@ -95,7 +96,7 @@
 
 ## Decision: Write-only guest behavior and provider dashboard review
 
-**Rationale**: Guests should not authenticate and should not see other RSVPs. The couple can review responses in the provider dashboard, eliminating custom admin scope while satisfying the privacy requirement.
+**Rationale**: Guests should not authenticate and should not see other RSVPs. The couple can review responses in the private Google Sheet, eliminating custom admin scope while satisfying the privacy requirement.
 
 **Alternatives considered**:
 - Guest accounts: rejected by scope and poor RSVP ergonomics.

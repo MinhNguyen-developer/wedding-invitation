@@ -9,7 +9,7 @@ const attendeeCount = z.coerce
     invalid_type_error: "Số lượng người tham dự không hợp lệ."
   })
   .int("Số lượng người tham dự phải là số nguyên.")
-  .min(1, "Số lượng người tham dự phải ít nhất là 1.")
+  .min(0, "Số lượng người tham dự không hợp lệ.")
   .max(
     weddingContent.attendeeLimit,
     `Số lượng người tham dự không được vượt quá ${weddingContent.attendeeLimit}.`
@@ -27,6 +27,22 @@ export const rsvpRequestSchema = z
     website: z.string().optional()
   })
   .superRefine((value, context) => {
+    if (value.attendanceStatus === "attending" && value.attendeeCount < 1) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["attendeeCount"],
+        message: "Số lượng người tham dự phải ít nhất là 1."
+      });
+    }
+
+    if (value.attendanceStatus === "not_attending" && value.attendeeCount !== 0) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["attendeeCount"],
+        message: "Số lượng người tham dự phải bằng 0 khi bạn không thể tham dự."
+      });
+    }
+
     if (value.website && value.website.trim().length > 0) {
       context.addIssue({
         code: z.ZodIssueCode.custom,

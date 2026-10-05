@@ -4,7 +4,10 @@ import {
   hasHoneypotValue,
   rsvpRequestSchema,
 } from "@/lib/rsvp-schema";
-import { saveRsvpResponse } from "@/lib/rsvp-service";
+import { appendRsvpResponse } from "@/lib/google-sheets-service";
+
+export const maxDuration = 20;
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   let payload: unknown;
@@ -43,14 +46,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    await saveRsvpResponse({
-      guest_name: parsed.data.guestName,
-      attendance_status: parsed.data.attendanceStatus,
-      attendee_count: parsed.data.attendeeCount,
-      message: parsed.data.message?.trim() ? parsed.data.message.trim() : null,
+    await appendRsvpResponse({
+      guestName: parsed.data.guestName,
+      attendanceStatus: parsed.data.attendanceStatus,
+      attendeeCount: parsed.data.attendeeCount,
+      message: parsed.data.message?.trim() ?? "",
     });
 
-    console.info("RSVP submission saved.");
+    console.info("RSVP submission written to Google Sheets.");
     return NextResponse.json(
       { ok: true, message: "Cảm ơn bạn đã phản hồi lời mời." },
       { status: 201 },

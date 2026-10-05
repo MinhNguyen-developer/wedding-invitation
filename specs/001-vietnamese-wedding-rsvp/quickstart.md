@@ -4,7 +4,7 @@
 
 - Node.js LTS installed.
 - Package manager selected for the project.
-- Supabase project prepared for RSVP response storage.
+- Google Cloud project with the Sheets API enabled, a service account, and a private spreadsheet shared with that service account.
 - Supabase Storage bucket prepared for public gallery image delivery.
 - Production and local environment variables configured outside source control.
 - Real pre-wedding images uploaded to the configured Supabase Storage bucket, or temporary replacement images clearly marked for later replacement.
@@ -12,7 +12,7 @@
 ## Setup
 
 1. Install dependencies with `npm install`.
-2. Copy `.env.example` to `.env.local` and configure local environment variables for the RSVP submission path.
+2. Copy `.env.example` to `.env.local` and configure the Google Sheets spreadsheet ID, tab name, service account email, and private key for RSVP submission.
 3. Create or confirm the Supabase Storage bucket for pre-wedding images.
 4. Upload optimized pre-wedding images to the configured Supabase Storage bucket.
 5. Update gallery metadata with the public image URLs, storage object paths, captions, and descriptive alt text from [contracts/gallery-media.md](./contracts/gallery-media.md).
@@ -51,7 +51,7 @@
 
 1. Open the RSVP form.
 2. Try to submit the form with missing required fields.
-3. Try invalid attendee counts such as `0`, `-1`, decimal values, and a value above the configured event limit.
+3. For an attending RSVP, try invalid attendee counts such as `0`, `-1`, decimal values, and a value above the configured event limit. A not-attending RSVP should save an attendee count of `0`.
 
 **Expected result**: The form blocks invalid submissions and displays helpful Vietnamese validation messages.
 
@@ -62,7 +62,7 @@
 3. Enter a valid attendee count.
 4. Optionally enter a Vietnamese message with accents.
 5. Submit the RSVP.
-6. Review the saved response list through the couple's private provider dashboard.
+6. Review the saved response in the configured private Google Sheets tab.
 
 **Expected result**: The guest sees a success confirmation, and the saved response includes guest name, attendance choice, attendee count, optional message, and submission time.
 
@@ -100,5 +100,5 @@
 2. Complete all validation scenarios against preview.
 3. Promote to production.
 4. Submit one production test RSVP.
-5. Confirm the response is available to the couple.
+5. Confirm the response is available to the couple in Google Sheets.
 6. Remove the production test response if desired.

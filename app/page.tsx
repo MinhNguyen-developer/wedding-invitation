@@ -7,15 +7,20 @@ import { VenueSection } from "@/components/venue-section";
 export default function Home() {
   return (
     <>
+      <a className="skip-link" href="#main-content">
+        Bỏ qua điều hướng, đến nội dung chính
+      </a>
       <SiteNav />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <InvitationSection />
         <VenueSection />
         <RsvpForm />
         <PhotoGallery />
       </main>
-      <footer className="border-t border-rosewood/10 py-8 text-center text-sm text-ink/65">
-        <p>Cảm ơn bạn đã là một phần trong ngày hạnh phúc của Minh & Hà.</p>
+      <footer className="border-t border-rosewood/10 bg-paper/70 px-4 py-9 text-center text-sm leading-6 text-ink/70">
+        <p className="font-display text-lg text-rosewood">
+          Cảm ơn bạn đã là một phần trong ngày hạnh phúc của Quốc Minh & Nhật Hà.
+        </p>
       </footer>
     </>
   );

@@ -11,22 +11,26 @@ export function SiteNav() {
   return (
     <nav
       aria-label="Điều hướng thiệp cưới"
-      className="fixed inset-x-0 top-0 z-[100] border-b border-white/45 bg-ivory/85 backdrop-blur-md"
+      className="fixed inset-x-0 top-0 z-[100] border-b border-rosewood/10 bg-ivory/90 shadow-[0_8px_28px_rgb(55_35_33/0.04)] backdrop-blur-xl"
     >
-      <div className="section-shell flex min-h-16 items-center justify-between gap-4">
-        <a className="font-display text-xl text-rosewood" href="#loi-moi">
-          Minh & Hà
+      <div className="section-shell flex min-h-16 items-center gap-2">
+        <a
+          className="shrink-0 font-display text-lg text-rosewood sm:text-xl"
+          href="#loi-moi"
+          aria-label="Minh và Hà, về đầu trang"
+        >
+          <span className="sm:hidden">M · H</span>
+          <span className="hidden sm:inline">Minh & Hà</span>
         </a>
-        <div className="flex items-center gap-1 overflow-x-auto rounded-md bg-white/55 p-1">
+        <div className="ml-auto flex min-w-0 items-center justify-end gap-0.5 rounded-full border border-rosewood/10 bg-paper/80 p-1 sm:gap-1">
           {links.map(({ href, label, icon: Icon }) => (
             <a
               key={href}
-              className="inline-flex h-10 min-w-10 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-ink transition hover:bg-petal/70"
+              className="inline-flex min-h-11 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2 text-xs font-semibold text-ink transition-colors hover:bg-petal/60 active:bg-petal sm:gap-2 sm:px-3 sm:text-sm"
               href={href}
-              title={label}
             >
-              <Icon aria-hidden="true" className="size-4" />
-              <span className="hidden sm:inline">{label}</span>
+              <Icon aria-hidden="true" className="hidden size-4 sm:block" />
+              <span>{label}</span>
             </a>
           ))}
         </div>

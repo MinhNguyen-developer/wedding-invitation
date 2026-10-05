@@ -6,15 +6,15 @@
 
 ## Summary
 
-Build a static-first, single-page Vietnamese wedding invitation website with a polished mobile-first guest experience, smooth pre-wedding photo transitions sourced from Supabase Storage, and a direct RSVP form. Use a minimal server-side submission path to validate and persist RSVP responses while keeping guest access write-only and leaving RSVP review to the managed provider dashboard.
+Build a static-first, single-page Vietnamese wedding invitation website with a polished mobile-first guest experience, smooth pre-wedding photo transitions sourced from Supabase Storage, and a direct RSVP form. Use a minimal server-side submission path to validate RSVP responses and append them to a private Google Sheet through the Google Sheets API, while keeping guest access write-only.
 
 ## Technical Context
 
 **Language/Version**: TypeScript with current Node.js LTS pinned in project tooling
 
-**Primary Dependencies**: Next.js, React, Tailwind CSS, Framer Motion, Embla Carousel or Swiper, React Hook Form, Zod, Supabase client/server libraries, Next image remote configuration for Supabase-hosted gallery images
+**Primary Dependencies**: Next.js, React, Tailwind CSS, Framer Motion, Embla Carousel or Swiper, React Hook Form, Zod, Google APIs client library, Next image remote configuration for Supabase-hosted gallery images
 
-**Storage**: Supabase managed Postgres for RSVP responses; Supabase Storage bucket for optimized pre-wedding imagery
+**Storage**: Google Sheets API for new RSVP submissions; Supabase Storage bucket for optimized pre-wedding imagery
 
 **Testing**: Unit/component tests for validation and UI states; end-to-end tests for invitation viewing, gallery display, RSVP success, RSVP validation failure, and guest inability to access response list; manual mobile quickstart validation
 
@@ -73,19 +73,18 @@ components/
 
 lib/
 ├── rsvp-schema.ts
-├── rsvp-service.ts
-├── supabase-server.ts
+├── google-sheets-service.ts
 └── wedding-content.ts
 
 supabase/
-└── schema.sql
+└── storage.sql
 
 tests/
 ├── e2e/
 └── unit/
 ```
 
-**Structure Decision**: Use a single Next.js web application at the repository root. Keep reusable UI in `components/`, validation and provider wiring in `lib/`, the RSVP write path in `app/api/rsvp/route.ts`, and gallery metadata/source URLs in editable content configuration. Store production pre-wedding images in a Supabase Storage bucket instead of bundling them as public app assets.
+**Structure Decision**: Use a single Next.js web application at the repository root. Keep reusable UI in `components/`, validation and the Google Sheets API transport in `lib/`, and the RSVP write path in `app/api/rsvp/route.ts`. Keep gallery metadata/source URLs in editable content configuration and production pre-wedding images in Supabase Storage.
 
 ## Complexity Tracking
 

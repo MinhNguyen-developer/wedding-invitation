@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
-  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Avenir Next", Avenir, "Segoe UI", system-ui, sans-serif;
+  --font-display: "Iowan Old Style", Baskerville, "Palatino Linotype", Georgia, serif;
   color-scheme: light;
   background: #fffaf2;
 }
@@ -15,15 +15,21 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
 }
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
-  color: #252525;
+  color: #292421;
   background:
-    radial-gradient(circle at 20% 0%, rgb(247 217 220 / 0.55), transparent 28rem),
-    linear-gradient(135deg, #fffaf2 0%, #fdf4ef 42%, #f3f7ed 100%);
+    radial-gradient(ellipse at 10% 12%, rgb(247 217 220 / 0.42), transparent 34rem),
+    radial-gradient(ellipse at 90% 70%, rgb(218 224 208 / 0.34), transparent 38rem),
+    #fffaf2;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button,
@@ -33,18 +39,58 @@ select {
   font: inherit;
 }
 
-button,
 a,
+button,
 input,
 textarea,
 select {
-  outline-color: #8f3d4f;
+  outline-color: #76512f;
+  outline-offset: 3px;
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 3px solid #76512f;
   outline-offset: 3px;
 }
 
 img {
   max-width: 100%;
   height: auto;
+}
+
+section[id] {
+  scroll-margin-top: 5.5rem;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 200;
+  top: 1rem;
+  left: 1rem;
+  transform: translateY(-180%);
+  border-radius: 999px;
+  background: #fffdf9;
+  padding: 0.75rem 1rem;
+  color: #8f3d4f;
+  font-weight: 700;
+  box-shadow: 0 12px 32px rgb(41 36 33 / 0.18);
+  transition: transform 180ms ease-out;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.section-shell {
+  width: min(1160px, calc(100% - 32px));
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .section-shell {
+    width: min(1160px, calc(100% - 64px));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -56,9 +102,4 @@ img {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
-}
-
-.section-shell {
-  width: min(1120px, calc(100% - 32px));
-  margin-inline: auto;
 }

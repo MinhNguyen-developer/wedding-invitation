@@ -1,5 +1,6 @@
--- RSVP storage for the Vietnamese Wedding Invitation RSVP Website.
--- Run this in the Supabase SQL editor before deploying the production RSVP form.
+-- Legacy RSVP storage schema. New submissions are sent directly to Google Sheets.
+-- Keep this file for existing installations and historical rows; it is no longer
+-- required for a new deployment of the website.
 
 create extension if not exists pgcrypto;
 
@@ -22,4 +23,4 @@ comment on column public.rsvps.created_at is 'Server-side submission timestamp.'
 alter table public.rsvps enable row level security;
 
 -- Guests submit through the server-side route. Do not create public select, update, or delete policies.
--- The couple reviews data in the Supabase dashboard using authenticated project access.
+-- Historical responses can still be reviewed in the Supabase dashboard.
