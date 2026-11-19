@@ -84,6 +84,10 @@ Trình duyệt CUA hiện không khả dụng. Nếu tình trạng này tiếp d
 
 ## Tư liệu tham khảo
 
+Kết quả triển khai: 24/24 unit test, 32/32 kiểm thử trình duyệt desktop/mobile và production build đạt. Sau rà soát, đã sửa vị trí anchor khi mở trực tiếp RSVP bằng cách giữ ổn định chiều cao từ CSS ban đầu, và bảo đảm mọi liên kết menu có vùng bấm tối thiểu 44×44px. Tám kiểm thử liên quan được chạy thêm trên production build và đều đạt. Đã xem trực quan màn mở đầu, bìa tạp chí và RSVP trên Chrome. Không còn phát hiện quan trọng chưa xử lý.
+
+Ảnh thật chưa được cấu hình nên bìa hiển thị monogram và album thông báo đang chuẩn bị. Các kiểm thử RSVP dùng phản hồi giả lập; không gửi phản hồi thật vào Google Sheets. Mã nằm trong workspace hiện tại trên nhánh `codex/wedding-scroll-redesign`.
+
 - Cartier: https://www.cartier.com/watchesandwonders — URL hiện tại chặn truy cập tự động.
 - Tư liệu của đơn vị thiết kế Cartier 2024: https://immersive-g.com/projects/cartier-watches-and-wonders-24/ — rèm mở màn và cách kể chuyện bằng thao tác cuộn; không coi tư liệu 2024 là ảnh chụp trực tiếp website hiện tại.
 - Oryzo: https://oryzo.ai/ — bố cục có chữ lớn, vật thể trung tâm và hành trình liên tục qua các phần.

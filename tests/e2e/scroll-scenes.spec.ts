@@ -37,9 +37,21 @@ test("reduced motion removes extra scroll distance and keeps the opening readabl
 
 for (const viewport of [{ width: 375, height: 812 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }, { width: 812, height: 375 }]) {
   test(`layout fits ${viewport.width} by ${viewport.height} and keeps focused fields below navigation`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.setViewportSize(viewport);
     await page.goto("/#rsvp");
     const field = page.getByLabel("Họ và tên", { exact: true });
+    await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "enabled");
+    await expect(field).toBeInViewport();
+    // Native smooth scrolling can still be settling when a field first enters view.
+    await expect.poll(async () => {
+      const section = await page.locator("#rsvp").boundingBox();
+      const header = await page.getByRole("navigation").boundingBox();
+      return section!.y - (header!.y + header!.height);
+    }).toBeLessThanOrEqual(40);
+    const section = await page.locator("#rsvp").boundingBox();
+    const header = await page.getByRole("navigation").boundingBox();
+    expect(section!.y).toBeGreaterThanOrEqual(header!.y + header!.height);
     await field.focus();
     await expect(field).toBeInViewport();
     const bounds = await field.boundingBox();
@@ -48,6 +60,16 @@ for (const viewport of [{ width: 375, height: 812 }, { width: 768, height: 1024 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 }
+
+test("mobile navigation offers at least 44px targets", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  for (const link of await page.getByRole("navigation").getByRole("link").all()) {
+    const bounds = await link.boundingBox();
+    expect(bounds!.width).toBeGreaterThanOrEqual(44);
+    expect(bounds!.height).toBeGreaterThanOrEqual(44);
+  }
+});
 
 test.describe("without JavaScript", () => {
   test.use({ javaScriptEnabled: false });

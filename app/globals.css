@@ -57,16 +57,15 @@ section[id] { scroll-margin-top: 0; }
 .site-wordmark { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-display); font-size: 1.9rem; letter-spacing: -.06em; color: rgb(var(--color-burgundy)); }
 .site-wordmark span { font-size: 1rem; font-style: italic; padding-inline: .3rem; }
 .site-links { display: flex; align-items: center; gap: 32px; }
-.site-links a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; color: rgb(var(--color-ink)); font-size: .8125rem; letter-spacing: .045em; transition: color 180ms ease, background 180ms ease; }
+.site-links a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; color: rgb(var(--color-ink)); font-size: .8125rem; letter-spacing: .045em; transition: color 180ms ease, background 180ms ease; }
 .site-links a:hover { color: rgb(var(--color-burgundy)); text-decoration: underline; text-underline-offset: 6px; }
 .site-links .nav-rsvp { border: 1px solid rgb(var(--color-burgundy) / .5); padding-inline: 20px; color: rgb(var(--color-burgundy)); }
 .site-links .nav-rsvp:hover { background: rgb(var(--color-burgundy)); color: rgb(var(--color-paper)); text-decoration: none; }
 
 /* Screen one: transforms follow the native scroll position. */
-.opening-stage { position: relative; scroll-margin-top: 0; }
-.stage-frame { position: relative; min-height: 100svh; overflow: clip; display: grid; place-items: center; background: rgb(var(--color-champagne)); }
-.opening-stage[data-motion="enabled"] { height: 180svh; }
-.opening-stage[data-motion="enabled"] .stage-frame { position: sticky; top: 0; height: 100svh; }
+/* Reserve the runway before hydration so native fragment positions stay stable. */
+.opening-stage { position: relative; height: 180svh; scroll-margin-top: 0; }
+.stage-frame { position: sticky; top: 0; height: 100svh; min-height: 100svh; overflow: clip; display: grid; place-items: center; background: rgb(var(--color-champagne)); }
 .stage-world { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 76px; background: radial-gradient(ellipse at 50% 37%, rgb(var(--color-paper)), rgb(var(--color-ivory)) 52%, rgb(var(--color-champagne)) 110%); }
 .stage-arch { position: absolute; top: 15%; bottom: -20%; width: min(66%, 650px); border: 1px solid rgb(var(--color-gold) / .22); border-radius: 50% 50% 0 0; box-shadow: 0 0 0 18px rgb(var(--color-paper) / .3), 0 0 0 19px rgb(var(--color-gold) / .09); }
 .wedding-monogram { display: block; width: min(100%, 320px); color: rgb(var(--color-burgundy)); }
@@ -201,7 +200,7 @@ textarea.form-control { min-height: 125px; resize: vertical; }
   .site-links { gap: 14px; }
   .site-links a { font-size: .75rem; letter-spacing: 0; }
   .site-links .nav-rsvp { padding-inline: 12px; }
-  .opening-stage[data-motion="enabled"] { height: 145svh; }
+  .opening-stage { height: 145svh; }
   .stage-content { padding: 104px 20px 86px; }
   .stage-title { font-size: clamp(3rem, 12vw, 5.5rem); margin-block: 24px; }
   .stage-eyebrow { font-size: .75rem; letter-spacing: .18em; }
@@ -232,8 +231,8 @@ textarea.form-control { min-height: 125px; resize: vertical; }
   .site-footer { padding-block: 40px; }
 }
 @media (max-height: 600px) and (orientation: landscape) {
-  .opening-stage[data-motion="enabled"] { height: auto; }
-  .opening-stage[data-motion="enabled"] .stage-frame { position: relative; height: auto; min-height: 560px; }
+  .opening-stage { height: auto; }
+  .opening-stage .stage-frame { position: relative; height: auto; min-height: 560px; }
   .stage-content { opacity: 1 !important; transform: none !important; pointer-events: auto !important; padding-top: 110px; padding-bottom: 80px; }
   .curtain { transform: none !important; }
   .stage-title { font-size: 3.5rem; margin-block: 16px; }
@@ -241,8 +240,8 @@ textarea.form-control { min-height: 125px; resize: vertical; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  .opening-stage[data-motion="enabled"] { height: auto; }
-  .opening-stage[data-motion="enabled"] .stage-frame { position: relative; height: auto; }
+  .opening-stage { height: auto; }
+  .opening-stage .stage-frame { position: relative; height: auto; }
   .stage-content, .curtain, .portrait-image { transform: none !important; }
   .stage-content { opacity: 1 !important; pointer-events: auto !important; }
 }

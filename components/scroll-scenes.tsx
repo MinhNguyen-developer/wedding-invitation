@@ -20,6 +20,9 @@ export function OpeningStage({ children }: { children: ReactNode }) {
 
   return (
     <section ref={stageRef} id="loi-moi" aria-label="Mở thiệp cưới" className="opening-stage" data-motion={motionEnabled ? "enabled" : "static"}>
+      <noscript>
+        <style>{`.opening-stage { height: auto !important; } .opening-stage .stage-frame { position: relative; height: auto; }`}</style>
+      </noscript>
       <div className="stage-frame">
         <div className="stage-world" aria-hidden="true">
           <div className="stage-arch" />
