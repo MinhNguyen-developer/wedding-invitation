@@ -22,6 +22,10 @@ export const galleryMediaItemsSchema = z.array(galleryMediaSchema).min(1, "At le
 
 export type GalleryMediaItem = z.infer<typeof galleryMediaSchema>;
 
+export function isPlaceholderPhoto(publicUrl: string): boolean {
+  return publicUrl.startsWith("/images/pre-wedding/") && publicUrl.endsWith(".svg");
+}
+
 type GalleryMediaSource = Omit<GalleryMediaItem, "publicUrl"> & {
   localFallbackPath: string;
 };

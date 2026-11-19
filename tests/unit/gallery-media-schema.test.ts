@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { createGalleryMediaItems, galleryMediaSchema, isManagedStorageUrl } from "@/lib/gallery-media-schema";
+import { createGalleryMediaItems, galleryMediaSchema, isManagedStorageUrl, isPlaceholderPhoto } from "@/lib/gallery-media-schema";
 
 describe("gallery media schema", () => {
+  it("recognizes temporary local artwork without treating real local or remote photos as placeholders", () => {
+    expect(isPlaceholderPhoto("/images/pre-wedding/pre-wedding-01.svg")).toBe(true);
+    expect(isPlaceholderPhoto("/images/pre-wedding/photo.jpg")).toBe(false);
+    expect(isPlaceholderPhoto("https://example.com/pre-wedding-01.svg")).toBe(false);
+  });
   it("builds sorted public URLs from a Supabase Storage base URL", () => {
     const items = createGalleryMediaItems(
       [
