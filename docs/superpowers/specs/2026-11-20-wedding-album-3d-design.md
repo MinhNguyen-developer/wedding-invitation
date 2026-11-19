@@ -1,5 +1,7 @@
 # Mở rộng thiệp cưới với album 3D và ảnh demo
 
+Phần album vòng cung và số lượng ảnh trong bản này được thay bằng [trang album riêng với 10 ảnh và hành trình cuộn 3D](2026-11-20-standalone-album-design.md) theo yêu cầu tiếp theo của người dùng.
+
 Ngày: 20/11/2026. Phạm vi: tiếp nối hướng hai màn đã duyệt theo yêu cầu thêm 3D và dùng ảnh demo trước của người dùng.
 
 Album trở thành không gian trưng bày ảnh: các tấm ảnh có độ dày giấy, ánh sáng, bóng đổ và vị trí theo vòng cung. Tấm đang xem ở phía trước; nút trước/sau và vuốt đổi ảnh bằng chuyển động liên tục. Cuộn trang thay đổi góc nhìn và độ mở của vòng cung; con trỏ tạo độ nghiêng nhẹ. Tiêu đề và chú thích vẫn là HTML dễ đọc. Không chiếm quyền cuộn hoặc bắt hoàn thành animation để tới RSVP.

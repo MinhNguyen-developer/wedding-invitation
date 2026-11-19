@@ -10,13 +10,11 @@ export type WeddingScene = {
   update: (progress: number, pointerX: number, pointerY: number, aspect: number) => void;
   dispose: () => void;
   ready?: Promise<unknown>;
-  needsRender?: () => boolean;
 };
 export type WeddingSceneFactory = (renderer: WebGLRenderer) => WeddingScene;
 
-export function WebGLSceneCanvas({ progress, selection, onReady, createScene, className }: {
+export function WebGLSceneCanvas({ progress, onReady, createScene, className }: {
   progress: MotionValue<number>;
-  selection?: MotionValue<number>;
   onReady: (ready: boolean) => void;
   createScene: WeddingSceneFactory;
   className: string;
@@ -80,7 +78,7 @@ export function WebGLSceneCanvas({ progress, selection, onReady, createScene, cl
         cleanup();
         return;
       }
-      if (Math.abs(targetX - pointerX) + Math.abs(targetY - pointerY) > 0.001 || stage.needsRender?.()) requestRender();
+      if (Math.abs(targetX - pointerX) + Math.abs(targetY - pointerY) > 0.001) requestRender();
     }
 
     function resize() {
@@ -119,7 +117,6 @@ export function WebGLSceneCanvas({ progress, selection, onReady, createScene, cl
     }
 
     const unsubscribe = progress.on("change", requestRender);
-    const unsubscribeSelection = selection?.on("change", requestRender);
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(host);
     const intersectionObserver = new IntersectionObserver(([entry]) => {
@@ -157,7 +154,6 @@ export function WebGLSceneCanvas({ progress, selection, onReady, createScene, cl
       disposed = true;
       if (frame !== null) cancelAnimationFrame(frame);
       unsubscribe();
-      unsubscribeSelection?.();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       host!.removeEventListener("pointermove", movePointer);
@@ -174,7 +170,7 @@ export function WebGLSceneCanvas({ progress, selection, onReady, createScene, cl
       cleanup();
       onReady(false);
     };
-  }, [progress, selection, onReady, createScene]);
+  }, [progress, onReady, createScene]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

@@ -7,12 +7,11 @@ import type { GalleryMediaItem } from "@/lib/gallery-media-schema";
 import { createWeddingAlbum } from "@/lib/wedding-album-3d";
 import { WebGLSceneCanvas } from "./webgl-scene-canvas";
 
-export function GalleryScene({ photos, progress, selection, onReady }: {
+export function GalleryScene({ photos, progress, onReady }: {
   photos: readonly GalleryMediaItem[];
   progress: MotionValue<number>;
-  selection: MotionValue<number>;
   onReady: (ready: boolean) => void;
 }) {
-  const createScene = useCallback((renderer: WebGLRenderer) => createWeddingAlbum(renderer, photos, selection), [photos, selection]);
-  return <WebGLSceneCanvas progress={progress} selection={selection} onReady={onReady} createScene={createScene} className="gallery-canvas" />;
+  const createScene = useCallback((renderer: WebGLRenderer) => createWeddingAlbum(renderer, photos), [photos]);
+  return <WebGLSceneCanvas progress={progress} onReady={onReady} createScene={createScene} className="album-canvas" />;
 }

@@ -1,17 +1,19 @@
-const links = [
-  { href: "#loi-moi", label: "Lời mời" },
-  { href: "#album", label: "Album" },
-  { href: "#dia-diem", label: "Địa điểm" },
-  { href: "#rsvp", label: "RSVP" }
-];
+import Link from "next/link";
 
-export function SiteNav() {
+export function SiteNav({ onAlbum = false }: { onAlbum?: boolean }) {
+  const home = onAlbum ? "/" : "";
+  const links = [
+    { href: `${home}#loi-moi`, label: "Lời mời" },
+    { href: "/album", label: "Album" },
+    { href: `${home}#dia-diem`, label: "Địa điểm" },
+    { href: `${home}#rsvp`, label: "RSVP" }
+  ];
   return (
     <nav aria-label="Điều hướng thiệp cưới" className="site-nav">
       <div className="section-shell nav-inner">
-        <a className="site-wordmark" href="#loi-moi" aria-label="Minh và Hà, về đầu trang">M<span>&</span>H</a>
+        <a className="site-wordmark" href={`${home}#loi-moi`} aria-label="Minh và Hà, về đầu trang">M<span>&</span>H</a>
         <div className="site-links">
-          {links.map(({ href, label }) => <a key={href} href={href} className={href === "#rsvp" ? "nav-rsvp" : undefined}>{label}</a>)}
+          {links.map(({ href, label }) => <Link key={href} href={href} prefetch={false} aria-current={onAlbum && label === "Album" ? "page" : undefined} className={label === "RSVP" ? "nav-rsvp" : undefined}>{label}</Link>)}
         </div>
       </div>
     </nav>

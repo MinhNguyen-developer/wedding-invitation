@@ -1,104 +1,144 @@
 import { expect, test } from "@playwright/test";
 
-test("demo album renders real 3D and rotates photos through keyboard controls", async ({ page }) => {
+async function scrollToPhoto(page: import("@playwright/test").Page, index: number) {
+  await page.locator(`#photo-${String(index).padStart(2, "0")}`).evaluate((element) => window.scrollTo({ top: element.getBoundingClientRect().top + window.scrollY, behavior: "instant" }));
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-active-photo", String(index));
+}
+
+test("standalone album animates all ten photographs through native scrolling", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/#album");
-  const album = page.locator(".gallery-renderer");
-  await expect(album).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  await page.goto("/album");
+  await expect(page.locator(".album-chapter")).toHaveCount(10);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Những ngày đẹp nhất.");
   await expect(page.getByText("Ảnh minh họa · Album demo")).toBeVisible();
-  const canvas = album.locator("canvas");
+  const experience = page.locator(".album-experience");
+  await expect(experience).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  const canvas = page.locator(".album-canvas");
   await expect(canvas).toHaveCSS("opacity", "1");
-  const first = await canvas.screenshot();
-  const next = page.getByRole("button", { name: "Xem ảnh tiếp theo" });
+  // Isolate the GPU image so moving HTML captions cannot satisfy this proof.
+  const captureScene = () => canvas.screenshot({ style: ".album-chapters, .site-nav, .album-controls, .album-demo-note { visibility: hidden !important; }" });
+  let previous: Buffer | undefined;
+  for (let index = 1; index <= 10; index++) {
+    await scrollToPhoto(page, index);
+    const current = await captureScene();
+    if (previous) await expect.poll(async () => (await captureScene()).equals(previous!)).toBe(false);
+    previous = current;
+    await expect(page.locator(`#photo-${String(index).padStart(2, "0")} h2`)).toBeInViewport();
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
+});
+
+test("direct photo fragments and keyboard next link preserve access back to RSVP", async ({ page }) => {
+  await page.goto("/album#photo-05");
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-active-photo", "5");
+  const next = page.getByRole("link", { name: "Ảnh tiếp theo", exact: true });
   await next.focus();
   await page.keyboard.press("Enter");
-  await expect(page.locator("#album").getByRole("status")).toContainText("Ảnh 2 trên");
-  await expect.poll(async () => (await canvas.screenshot()).equals(first)).toBe(false);
-  await next.click();
-  await next.click();
-  await expect(page.locator("#album").getByRole("status")).toContainText("Ảnh 1 trên");
-  await page.getByRole("button", { name: "Xem ảnh trước" }).click();
-  await expect(page.locator("#album").getByRole("status")).toContainText("Ảnh 3 trên");
-  const viewport = page.viewportSize()!;
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+  await expect(page).toHaveURL(/#photo-06$/);
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-active-photo", "6");
+  await page.getByRole("navigation").getByRole("link", { name: "RSVP", exact: true }).click();
+  await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();
 });
 
-test("album falls back to usable photos when GPU context is lost", async ({ page }) => {
-  await page.goto("/#album");
-  const album = page.locator(".gallery-renderer");
-  await expect(album).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
-  await album.locator("canvas").evaluate((canvas: HTMLCanvasElement) => canvas.getContext("webgl2")!.getExtension("WEBGL_lose_context")!.loseContext());
-  await expect(album).toHaveAttribute("data-renderer", "fallback");
-  await expect(album.locator("img").first()).toBeVisible();
-  await page.getByRole("button", { name: "Xem ảnh tiếp theo" }).click();
-  await expect(page.locator("#album").getByRole("status")).toContainText("Ảnh 2 trên");
+test("lost GPU reveals all HTML photo chapters without losing the current chapter", async ({ page }) => {
+  await page.goto("/album");
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  await scrollToPhoto(page, 4);
+  await page.locator(".album-canvas").evaluate((canvas: HTMLCanvasElement) => canvas.getContext("webgl2")!.getExtension("WEBGL_lose_context")!.loseContext());
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "fallback");
+  await expect(page.locator("#photo-04 .album-photo")).toHaveCSS("opacity", "1");
+  await expect(page.locator(".album-chapter img")).toHaveCount(10);
 });
 
-test("album perspective follows scroll and photographs can be swiped", async ({ page }) => {
-  await page.goto("/#album");
-  const album = page.locator(".gallery-renderer");
-  await expect(album).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
-  const canvas = album.locator("canvas");
-  await expect(canvas).toHaveCSS("opacity", "1");
-  const first = await canvas.screenshot();
-  await page.evaluate(() => window.scrollBy({ top: 80, behavior: "instant" }));
-  await expect.poll(async () => (await canvas.screenshot()).equals(first)).toBe(false);
-  const viewport = await album.locator(".gallery-viewport").boundingBox();
-  await page.mouse.move(viewport!.x + viewport!.width * .8, viewport!.y + viewport!.height * .5);
-  await page.mouse.down();
-  await page.mouse.move(viewport!.x + viewport!.width * .2, viewport!.y + viewport!.height * .5, { steps: 12 });
-  await page.mouse.up();
-  await expect(page.locator("#album").getByRole("status")).not.toContainText("Ảnh 1 trên");
+test("one failed photo keeps the other 3D chapters available", async ({ page }) => {
+  await page.route((url) => url.href.includes("wedding-05.jpg"), (route) => route.abort());
+  await page.goto("/album#photo-05");
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  await expect(page.locator("#photo-05").getByText("Ảnh đang được cập nhật")).toBeAttached();
+  await scrollToPhoto(page, 6);
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "webgl");
 });
 
-test("failed album texture keeps HTML image errors and navigation usable", async ({ page }) => {
-  const failed = page.waitForEvent("console", (message) => message.type() === "warning" && message.text().includes("Wedding 3D shader preparation failed"));
-  await page.route("**/images/demo/wedding-02.jpg", (route) => route.abort());
-  await page.goto("/#album");
-  await failed;
-  await expect(page.locator(".gallery-renderer")).toHaveAttribute("data-renderer", "fallback");
-  await page.getByRole("button", { name: "Xem ảnh tiếp theo" }).click();
-  await expect(page.locator("#album").getByRole("status")).toContainText("Ảnh 2 trên");
-});
-
-test("editorial portrait changes its 3D perspective when scrolled", async ({ page }) => {
-  await page.goto("/#thiep-cuoi");
-  await page.locator(".editorial-portrait").scrollIntoViewIfNeeded();
-  const portrait = page.locator(".portrait-print");
-  await expect(portrait).toBeInViewport();
-  const first = await portrait.evaluate((element) => getComputedStyle(element).transform);
-  await page.evaluate(() => window.scrollBy({ top: 220, behavior: "instant" }));
-  await expect.poll(() => portrait.evaluate((element) => getComputedStyle(element).transform)).not.toBe(first);
-  await expect(page.locator(".portrait-demo-label")).toHaveText("Ảnh minh họa");
-});
-
-test("mobile HTML fallback keeps photo captions fully inside the viewport", async ({ page }) => {
+test("missing GPU leaves mobile photo and caption readable", async ({ page }) => {
   await page.setViewportSize({ width: 393, height: 852 });
   await page.addInitScript(() => {
-    const getContext = HTMLCanvasElement.prototype.getContext;
+    const original = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
-      if (type === "webgl2" || type === "webgl") return null;
-      return Reflect.apply(getContext, this, [type, ...args]);
+      if (type.startsWith("webgl")) return null;
+      return Reflect.apply(original, this, [type, ...args]);
     };
   });
-  await page.goto("/#album");
-  const viewport = page.locator(".gallery-viewport");
-  await viewport.scrollIntoViewIfNeeded();
-  await expect(page.locator(".gallery-renderer")).toHaveAttribute("data-renderer", "fallback");
-  const bounds = await viewport.boundingBox();
-  const caption = await viewport.locator("figcaption").first().boundingBox();
-  expect(caption!.y).toBeGreaterThanOrEqual(bounds!.y);
-  expect(caption!.y + caption!.height).toBeLessThanOrEqual(bounds!.y + bounds!.height + 1);
+  await page.goto("/album#photo-10");
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "fallback");
+  await expect(page.locator("#photo-10 img")).toBeInViewport();
+  await expect(page.locator("#photo-10 h2")).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(393);
+});
+
+test("editorial portrait retains perspective on the invitation", async ({ page }) => {
+  await page.goto("/#thiep-cuoi");
+  await page.locator(".editorial-portrait").first().scrollIntoViewIfNeeded();
+  const portrait = page.locator(".portrait-print").first();
+  const initial = await portrait.evaluate((element) => getComputedStyle(element).transform);
+  await page.evaluate(() => window.scrollBy({ top: 220, behavior: "instant" }));
+  await expect.poll(() => portrait.evaluate((element) => getComputedStyle(element).transform)).not.toBe(initial);
+});
+
+for (const viewport of [{ width: 768, height: 1024 }, { width: 812, height: 375 }]) {
+  test(`album camera and captions fit ${viewport.width} by ${viewport.height}`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/album");
+    await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+    await scrollToPhoto(page, 3);
+    const heading = page.locator("#photo-03 h2");
+    await expect(heading).toBeInViewport();
+    const bounds = await heading.boundingBox();
+    const nav = await page.getByRole("navigation").boundingBox();
+    expect(bounds!.x).toBeGreaterThanOrEqual(16);
+    expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(viewport.width - 16);
+    expect(bounds!.y).toBeGreaterThanOrEqual(nav!.height);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+  });
+}
+
+test("rotation preserves the selected photo and its full-screen scene", async ({ page }) => {
+  for (const index of [5, 10]) {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto("/album");
+    await scrollToPhoto(page, index);
+    await page.setViewportSize({ width: 852, height: 393 });
+    await expect(page.locator(".album-experience")).toHaveAttribute("data-active-photo", String(index));
+    await expect.poll(async () => Math.abs((await page.locator(`#photo-${String(index).padStart(2, "0")}`).boundingBox())!.y)).toBeLessThan(2);
+    await expect(page.locator(`#photo-${String(index).padStart(2, "0")} h2`)).toBeInViewport();
+  }
+});
+
+test("compact HTML fallback reserves separate room for the photograph and caption", async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (type: string, ...args: unknown[]) {
+      if (type.startsWith("webgl")) return null;
+      return Reflect.apply(original, this, [type, ...args]);
+    };
+  });
+  for (const viewport of [{ width: 375, height: 667 }, { width: 320, height: 568 }]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/album");
+    await scrollToPhoto(page, 5);
+    const photo = await page.locator("#photo-05 .album-photo").boundingBox();
+    const caption = await page.locator("#photo-05 .album-chapter-copy").boundingBox();
+    expect(photo!.y + photo!.height + 8).toBeLessThanOrEqual(caption!.y);
+  }
 });
 
 test.describe("album without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
-  test("shows all demo photographs and keeps native RSVP access", async ({ page }) => {
-    await page.goto("/#album");
-    const images = page.locator("#album img");
-    await expect(images).toHaveCount(3);
-    for (const image of await images.all()) await expect(image).toBeVisible();
-    await page.getByRole("navigation").getByRole("link", { name: "RSVP", exact: true }).click();
-    await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();
+  test("renders ten photos and native links to the invitation", async ({ page }) => {
+    await page.goto("/album");
+    await expect(page.locator(".album-chapter img")).toHaveCount(10);
+    await page.goto("/album#photo-10");
+    await expect(page.locator("#photo-10 img")).toBeInViewport();
+    await page.getByRole("navigation").getByRole("link", { name: "Lời mời", exact: true }).click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Quốc Minh/);
   });
 });

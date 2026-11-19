@@ -1,12 +1,12 @@
 import {
-  ACESFilmicToneMapping, BoxGeometry, Color, Group, HemisphereLight, MathUtils,
-  Mesh, MeshBasicMaterial, MeshStandardMaterial, PCFShadowMap, PerspectiveCamera,
-  PlaneGeometry, Scene, SpotLight, SRGBColorSpace, TextureLoader, type WebGLRenderer
+  ACESFilmicToneMapping, BoxGeometry, CanvasTexture, Color, Group, HemisphereLight,
+  MathUtils, Mesh, MeshBasicMaterial, MeshStandardMaterial, PCFShadowMap,
+  PerspectiveCamera, PlaneGeometry, Scene, SpotLight, SRGBColorSpace, TextureLoader,
+  TorusGeometry, type WebGLRenderer
 } from "three";
-import type { MotionValue } from "framer-motion";
 import type { GalleryMediaItem } from "./gallery-media-schema";
 
-export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly GalleryMediaItem[], selection: MotionValue<number>) {
+export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly GalleryMediaItem[]) {
   const scene = new Scene();
   const resources: { dispose(): void }[] = [];
   const own = <T extends { dispose(): void }>(resource: T): T => { resources.push(resource); return resource; };
@@ -19,87 +19,122 @@ export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly Gal
   };
 
   try {
-    scene.background = new Color("#eee5d7");
+    const colors = [new Color("#f3ede2"), new Color("#e5d4bb"), new Color("#4b1f2d")];
+    const background = new Color();
+    scene.background = background;
     renderer.toneMapping = ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = 1.12;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFShadowMap;
-    const camera = new PerspectiveCamera(37, 1, 0.1, 40);
-    scene.add(new HemisphereLight("#fffaf0", "#b49b7e", 3));
-    const light = new SpotLight("#fff2d7", 130, 30, Math.PI / 3, 0.9, 2);
-    light.position.set(-4, 7, 6);
-    light.target.position.set(0, 0, -1);
+    const camera = new PerspectiveCamera(37, 1, 0.1, 160);
+    scene.add(new HemisphereLight("#fff8e9", "#92765d", 3));
+    const light = new SpotLight("#fff1d9", 155, 28, Math.PI / 3, 0.9, 2);
     light.castShadow = true;
     light.shadow.mapSize.set(512, 512);
-    light.shadow.bias = -0.001;
     light.shadow.normalBias = 0.025;
+    light.shadow.bias = -0.001;
     own(light.shadow);
     scene.add(light, light.target);
-
-    const floor = new Mesh(own(new PlaneGeometry(60, 60)), own(new MeshStandardMaterial({ color: "#eee5d7", roughness: 0.95 })));
+    const floorMaterial = own(new MeshStandardMaterial({ roughness: .9 }));
+    const floor = new Mesh(own(new PlaneGeometry(80, 240)), floorMaterial);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -2.12;
+    floor.position.set(0, -2.35, -45);
     floor.receiveShadow = true;
     scene.add(floor);
-
-    const paper = own(new MeshStandardMaterial({ color: "#fffaf1", roughness: 0.72 }));
-    const edge = own(new MeshStandardMaterial({ color: "#c8af82", metalness: 0.35, roughness: 0.55 }));
-    const printGeometry = own(new BoxGeometry(2.64, 3.42, 0.065));
-    const photoGeometry = own(new PlaneGeometry(2.36, 2.98));
+    const box = own(new BoxGeometry(1, 1, .07));
+    const plane = own(new PlaneGeometry(1, 1));
+    const arch = own(new TorusGeometry(2.18, .022, 6, 80));
     const loader = new TextureLoader();
-    const prints: Group[] = [];
-    const loads = photos.map((photo) => {
-      const print = new Group();
-      const backing = new Mesh(printGeometry, [edge, edge, paper, paper, paper, paper]);
+
+    const prints = photos.map((photo, index) => {
+      const group = new Group();
+      const paper = own(new MeshStandardMaterial({ color: "#fffaf1", roughness: .75, transparent: true }));
+      const gold = own(new MeshStandardMaterial({ color: "#c9a56a", metalness: .5, roughness: .4, transparent: true }));
+      const surface = own(new MeshBasicMaterial({ toneMapped: false, transparent: true }));
+      const border = new Mesh(box, gold);
+      border.position.z = -.035;
+      const backing = new Mesh(box, paper);
       backing.castShadow = true;
-      backing.receiveShadow = true;
-      print.add(backing);
-      const surface = own(new MeshBasicMaterial({ color: "#ffffff", toneMapped: false }));
-      const image = new Mesh(photoGeometry, surface);
-      image.position.set(0, 0.07, 0.034);
-      print.add(image);
-      scene.add(print);
-      prints.push(print);
-      return new Promise<void>((resolve, reject) => {
+      const image = new Mesh(plane, surface);
+      image.position.z = .037;
+      const halo = new Mesh(arch, gold);
+      halo.position.z = -.85;
+      halo.scale.x = .85;
+      const pedestal = new Mesh(box, paper);
+      pedestal.scale.set(3.7, .14, 19);
+      pedestal.position.set(0, -2.25, -.5);
+      pedestal.receiveShadow = true;
+      group.add(border, backing, image, halo, pedestal);
+      scene.add(group);
+      const dimensions = { width: 2.5, height: 3.5 };
+      function size(aspect: number) {
+        dimensions.height = Math.min(3.5, 3.7 / aspect);
+        dimensions.width = dimensions.height * aspect;
+        image.scale.set(dimensions.width, dimensions.height, 1);
+        backing.scale.set(dimensions.width + .18, dimensions.height + .22, 1);
+        border.scale.set(dimensions.width + .22, dimensions.height + .26, 1);
+      }
+      size(5 / 7);
+      const ready = new Promise<void>((resolve) => {
         own(loader.load(photo.publicUrl, (texture) => {
           if (disposed) { texture.dispose(); resolve(); return; }
           texture.colorSpace = SRGBColorSpace;
           texture.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-          const imageAspect = texture.image.width / texture.image.height;
-          const printAspect = 2.36 / 2.98;
-          if (imageAspect > printAspect) texture.repeat.x = printAspect / imageAspect;
-          else texture.repeat.y = imageAspect / printAspect;
-          texture.offset.set((1 - texture.repeat.x) / 2, (1 - texture.repeat.y) / 2);
+          size(MathUtils.clamp(texture.image.width / texture.image.height, .5, 2));
           surface.map = texture;
           surface.needsUpdate = true;
           resolve();
-        }, undefined, reject));
+        }, undefined, () => {
+          if (!disposed) {
+            const canvas = document.createElement("canvas");
+            canvas.width = 600; canvas.height = 800;
+            const context = canvas.getContext("2d");
+            if (context) {
+              context.fillStyle = "#f7f3eb"; context.fillRect(0, 0, 600, 800);
+              context.fillStyle = "#651f2d"; context.textAlign = "center";
+              context.font = "italic 60px Georgia"; context.fillText("M / H", 300, 350);
+              context.font = "24px Georgia"; context.fillText("Ảnh đang được cập nhật", 300, 430);
+              const placeholder = own(new CanvasTexture(canvas));
+              placeholder.colorSpace = SRGBColorSpace;
+              surface.map = placeholder;
+              surface.needsUpdate = true;
+            }
+          }
+          resolve();
+        }));
       });
+      return { group, dimensions, materials: [paper, gold, surface], index, ready };
     });
 
-    let rotation = selection.get();
-    let settling = false;
     return {
       scene, camera, dispose,
-      ready: Promise.all(loads),
-      needsRender: () => settling,
+      ready: Promise.all(prints.map((print) => print.ready)),
       update(progress: number, pointerX: number, pointerY: number, aspect: number) {
-        const count = photos.length;
-        // Follow the shortest direction across the last/first image boundary.
-        const delta = MathUtils.euclideanModulo(selection.get() - rotation + count / 2, count) - count / 2;
-        rotation += delta * 0.11;
-        settling = Math.abs(delta) > 0.001;
-        const scroll = MathUtils.clamp(progress, 0, 1);
-        const spread = MathUtils.lerp(0.78, 1.08, scroll);
-        prints.forEach((print, index) => {
-          const angle = (index - rotation) * Math.PI * 2 / count;
-          print.position.set(Math.sin(angle) * 3.65 * spread, Math.cos(angle) * 0.13, (Math.cos(angle) - 1) * 1.25);
-          print.rotation.set(-0.045 + pointerY * 0.035, Math.sin(angle) * -0.48 + pointerX * 0.045, Math.sin(angle) * -0.09);
+        const focus = MathUtils.clamp(progress, 0, 1) * Math.max(0, photos.length - 1);
+        const travelZ = -focus * 9;
+        const portrait = aspect <= 1.1;
+        if (focus < 3) background.copy(colors[0]);
+        else if (focus < 4) background.copy(colors[0]).lerp(colors[1], MathUtils.smoothstep(focus, 3, 4));
+        else if (focus < 6) background.copy(colors[1]);
+        else background.copy(colors[1]).lerp(colors[2], MathUtils.smoothstep(focus, 6, 7));
+        floorMaterial.color.copy(background);
+        prints.forEach(({ group, dimensions, materials, index }) => {
+          const distance = index - focus;
+          group.visible = Math.abs(distance) < 1.5;
+          if (!group.visible) return;
+          const alpha = 1 - MathUtils.smoothstep(Math.abs(distance), .25, 1.1);
+          materials.forEach((material) => { material.opacity = alpha; });
+          const fit = portrait ? Math.min(.95, (aspect * 5.8 - .35) / (dimensions.width + .22)) : 1;
+          group.scale.setScalar(Math.max(.25, fit));
+          group.position.set((portrait ? 0 : 1.48) + Math.sin(distance * 1.3) * (portrait ? 1.1 : 3.5), Math.abs(distance) * .35 - .08, -index * 9);
+          group.rotation.set(pointerY * .025 + distance * .08, MathUtils.clamp(distance, -1, 1) * .65 + pointerX * .04, Math.sin(distance) * .09 * (index % 2 ? -1 : 1));
         });
         camera.aspect = aspect;
-        camera.position.set(pointerX * 0.2, 0.25 + (scroll - 0.5) * 0.7 + pointerY * 0.1, aspect < 0.8 ? 8.4 : 7.7);
-        camera.lookAt(0, 0, -0.25);
+        camera.position.set(pointerX * .13, .16 + Math.sin(focus * Math.PI) * .16 + pointerY * .08, travelZ + (portrait ? 8.8 : 8));
+        camera.lookAt(0, -.08, travelZ);
         camera.updateProjectionMatrix();
+        light.position.set(-3, 6, travelZ + 5);
+        light.target.position.set(portrait ? 0 : 1.48, 0, travelZ - 2);
       }
     };
   } catch (error) {

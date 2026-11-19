@@ -31,7 +31,7 @@ export function InvitationSection() {
                 <span>{groom}</span><em>&</em><span>{bride}</span>
               </h2>
               <p className="cover-deck">Từ hôm nay,<br /><em>và mãi về sau.</em></p>
-              <a href="#album" className="text-link">Những khoảnh khắc của chúng mình</a>
+              <a href="/album" className="text-link">Những khoảnh khắc của chúng mình</a>
             </ScrollReveal>
             <figure className="cover-figure">
               <EditorialPortrait photo={weddingContent.gallery[0]} />
