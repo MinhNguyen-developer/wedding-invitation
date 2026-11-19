@@ -2,7 +2,7 @@
 
 Ngày: 19/11/2026
 
-Trạng thái: Chờ duyệt thiết kế, chưa triển khai giao diện.
+Trạng thái: Người dùng đã duyệt bằng “Hãy triển khai”; đã triển khai trên nhánh `codex/wedding-scroll-redesign`.
 
 ## Mong muốn đã xác nhận
 
@@ -80,7 +80,7 @@ Trình duyệt CUA hiện không khả dụng. Nếu tình trạng này tiếp d
 
 ## Những lựa chọn do người thiết kế đề xuất
 
-“Hai màn” được hiểu là hai cảnh nối tiếp trên cùng một trang cuộn, thay vì hai URL riêng. Phần tạp chí có thể dài hơn một viewport để chứa đủ thông tin và RSVP. Palette champagne / ivory / burgundy, kỹ thuật CSS/SVG cho rèm và phạm vi local repository là đề xuất của người thiết kế, chưa phải yêu cầu riêng được người dùng xác nhận.
+“Hai màn” được hiểu là hai cảnh nối tiếp trên cùng một trang cuộn, thay vì hai URL riêng. Phần tạp chí có thể dài hơn một viewport để chứa đủ thông tin và RSVP. Palette champagne / ivory / burgundy, kỹ thuật CSS/SVG cho rèm và phạm vi local repository là đề xuất đã được duyệt cùng bản thiết kế.
 
 ## Tư liệu tham khảo
 

@@ -1,6 +1,6 @@
 # Wedding Scroll Redesign Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Deliver the approved curtain opening and editorial wedding experience in the current repository.
 
@@ -32,11 +32,11 @@
 
 **Interfaces:** `OpeningStage({children}: {children: React.ReactNode})` wraps server-rendered heading/content; `ScrollReveal({children,className?})` keeps SSR content visible; `EditorialPortrait({photo}: {photo: GalleryMediaItem})` renders the supplied real photo or monogram fallback; `WeddingMonogram({className?})` renders decorative SVG; `isPlaceholderPhoto(publicUrl: string): boolean` identifies existing local SVG placeholders.
 
-- [ ] Repair the baseline alias with Node `fileURLToPath`, then run the suite and distinguish stale tests from new failures.
-- [ ] First write tests that require opening + editorial regions, preserve current invitation/event content, and exercise portrait placeholder/remote/error behavior. Run them and confirm expected missing-component/region failures.
-- [ ] Implement curtain transforms driven by `useScroll`/`useTransform`, opt into sticky scroll after hydration, and honor reduced motion in CSS and JS. Keep content visible in SSR.
-- [ ] Implement editorial portrait/parallax, central content rendering and shared palette/typography. Update native anchor navigation and footer.
-- [ ] Run `npm test -- --reporter=dot` and `npm run typecheck`; Task 2 owns gallery stale expectations. Commit the scene implementation after its focused tests pass.
+- [x] Repair the baseline alias with Node `fileURLToPath`, then run the suite and distinguish stale tests from new failures.
+- [x] First write tests that require opening + editorial regions, preserve current invitation/event content, and exercise portrait placeholder/remote/error behavior. Run them and confirm expected missing-component/region failures.
+- [x] Implement curtain transforms driven by `useScroll`/`useTransform`, opt into sticky scroll after hydration, and honor reduced motion in CSS and JS. Keep content visible in SSR.
+- [x] Implement editorial portrait/parallax, central content rendering and shared palette/typography. Update native anchor navigation and footer.
+- [x] Run `npm test -- --reporter=dot` and `npm run typecheck`; Task 2 owns gallery stale expectations. Commit the scene implementation after its focused tests pass.
 
 ### Task 2: Integrate album, venue and RSVP; verify and review
 
@@ -44,10 +44,10 @@
 
 **Interfaces:** Consume Task 1's `ScrollReveal`, `WeddingMonogram`, `isPlaceholderPhoto` and palette classes. Preserve `RsvpForm()` and `PhotoGallery()` public interfaces and `/api/rsvp` payload/response types.
 
-- [ ] Write and run gallery tests for placeholder/remote/error states and previous/next controls, plus RSVP tests for attendance payloads, validation, success, server failure and network retry.
-- [ ] Restyle gallery/venue/form at their current owners. Preserve image metadata, disable gallery control animation for reduced motion, and retain all labels, errors and live regions.
-- [ ] Align old e2e content assertions to the central wedding content and point Playwright to the existing dev port 3001. Add tests for scene order, curtain movement, reduced motion, no-JS content, direct anchors, responsive widths and short landscape layout.
-- [ ] Run `npm test -- --reporter=dot`, `npm run typecheck`, `npm run build`, `git diff --check`, and the e2e runner when its browser runtime is available. Report any infrastructure limitation without claiming browser QA.
+- [x] Write and run gallery tests for placeholder/remote/error states and previous/next controls, plus RSVP tests for attendance payloads, validation, success, server failure and network retry.
+- [x] Restyle gallery/venue/form at their current owners. Preserve image metadata, disable gallery control animation for reduced motion, and retain all labels, errors and live regions.
+- [x] Align old e2e content assertions to the central wedding content and point Playwright to the existing dev port 3001. Add tests for scene order, curtain movement, reduced motion, no-JS content, direct anchors, responsive widths and short landscape layout.
+- [x] Run `npm test -- --reporter=dot`, `npm run typecheck`, `npm run build`, `git diff --check`, and the e2e runner when its browser runtime is available. Report any infrastructure limitation without claiming browser QA.
 - [ ] Commit completed work, run one fresh whole-change review and resolve material findings with a focused regression check.
 
 ## Execution notes

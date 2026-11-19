@@ -41,7 +41,7 @@ button, a { cursor: pointer; }
 img { max-width: 100%; height: auto; }
 figure, p, h1, h2, h3 { margin: 0; }
 h1, h2, h3 { font-weight: 400; text-wrap: balance; }
-section[id] { scroll-margin-top: 6rem; }
+section[id] { scroll-margin-top: 0; }
 .section-shell { width: min(1280px, calc(100% - 40px)); margin-inline: auto; }
 .skip-link {
   position: fixed; z-index: 200; top: 1rem; left: 1rem;
@@ -164,6 +164,7 @@ section[id] { scroll-margin-top: 6rem; }
 .form-control { width: 100%; min-height: 50px; border: 1px solid rgb(var(--color-gold) / .4); border-radius: 0; background: transparent; padding: 12px 14px; font-size: 1rem; font-weight: 400; color: rgb(var(--color-ink)); transition: border-color 180ms ease, background 180ms ease; }
 .form-control::placeholder { color: rgb(var(--color-muted)); opacity: 1; }
 .form-control:focus { border-color: rgb(var(--color-burgundy)); background: rgb(var(--color-ivory)); }
+.form-control[aria-invalid="true"] { border-color: rgb(var(--color-error)); }
 textarea.form-control { min-height: 125px; resize: vertical; }
 .field-helper { color: rgb(var(--color-muted)); font-size: .8125rem; font-weight: 400; }
 .field-error { font-size: .875rem; font-weight: 500; color: rgb(var(--color-error)); }

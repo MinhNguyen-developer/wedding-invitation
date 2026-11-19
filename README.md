@@ -10,7 +10,9 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://127.0.0.1:3001`.
+
+The invitation opens with a scroll-controlled champagne curtain, followed by an editorial wedding page. Reduced-motion preferences show static scenes. Real gallery photos appear when configured; otherwise, the cover uses the couple's monogram and the album shows a preparation message.
 
 ## Environment Variables
 
