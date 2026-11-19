@@ -12,7 +12,7 @@ npm run dev
 
 Open `http://127.0.0.1:3001`.
 
-The invitation opens with a scroll-controlled champagne curtain, followed by an editorial wedding page. Reduced-motion preferences show static scenes. Real gallery photos appear when configured; otherwise, the cover uses the couple's monogram and the album shows a preparation message.
+The invitation opens with a real WebGL scene: folded champagne curtains, reflective gold wedding bands, an architectural alcove and a perspective camera controlled by scrolling. Three.js loads separately when the opening enters view. Rendering pauses offscreen and in hidden tabs; CSS/SVG remains available for unavailable/lost WebGL, reduced motion and no JavaScript. The editorial page, gallery, venue and RSVP retain their existing content and behavior. Real gallery photos appear when configured; otherwise, the cover uses the couple's monogram and the album shows a preparation message.
 
 ## Environment Variables
 

@@ -73,6 +73,10 @@ section[id] { scroll-margin-top: 0; }
 .stage-monogram { position: relative; width: clamp(190px, 24vw, 320px); max-height: 56svh; }
 .stage-world-caption { position: relative; padding: 12px 20px; font-family: var(--font-display); font-size: clamp(1.25rem, 2vw, 1.75rem); font-style: italic; color: rgb(var(--color-burgundy)); text-align: center; }
 .curtain-scene { position: absolute; inset: 0; pointer-events: none; }
+.stage-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; opacity: 0; pointer-events: none; }
+.stage-frame[data-renderer="webgl"] .stage-canvas { opacity: 1; }
+.stage-frame[data-renderer="webgl"] .stage-world,
+.stage-frame[data-renderer="webgl"] .curtain-scene { visibility: hidden; }
 .curtain { position: absolute; top: 0; bottom: 0; width: 50.2%; background: linear-gradient(180deg, rgb(var(--color-paper) / .18), transparent 24%, rgb(var(--color-curtain-shadow) / .12) 100%), repeating-linear-gradient(90deg, rgb(var(--color-curtain-shadow) / .22) 0%, rgb(var(--color-champagne)) 3%, rgb(var(--color-curtain-light)) 5%, rgb(var(--color-champagne)) 7%, rgb(var(--color-curtain-shadow) / .25) 10%); background-color: rgb(var(--color-champagne)); }
 .curtain::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 30%, rgb(var(--color-paper) / .2), transparent 70%); }
 .curtain-left { left: 0; border-radius: 0 0 12% 0; box-shadow: 10px 0 24px rgb(var(--color-curtain-shadow) / .15); }
@@ -242,6 +246,6 @@ textarea.form-control { min-height: 125px; resize: vertical; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .opening-stage { height: auto; }
   .opening-stage .stage-frame { position: relative; height: auto; }
-  .stage-content, .curtain, .portrait-image { transform: none !important; }
+  .stage-content, .curtain, .portrait-image, .scroll-reveal { transform: none !important; }
   .stage-content { opacity: 1 !important; pointer-events: auto !important; }
 }

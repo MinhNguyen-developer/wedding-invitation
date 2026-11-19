@@ -1,13 +1,22 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { WeddingMonogram } from "./wedding-monogram";
+import { useReducedMotionPreference } from "@/lib/use-reduced-motion";
+
+const WeddingStageScene = dynamic(
+  () => import("./wedding-stage-scene").then((module) => module.WeddingStageScene).catch(() => () => null),
+  { ssr: false }
+);
 
 export function OpeningStage({ children }: { children: ReactNode }) {
   const stageRef = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotionPreference();
   const [mounted, setMounted] = useState(false);
+  const [webglReady, setWebglReady] = useState(false);
+  const hasEntered = useInView(stageRef, { once: true });
   const { scrollYProgress } = useScroll({ target: stageRef, offset: ["start start", "end end"] });
   const left = useTransform(scrollYProgress, [0, 0.9], ["0%", "-105%"]);
   const right = useTransform(scrollYProgress, [0, 0.9], ["0%", "105%"]);
@@ -23,7 +32,8 @@ export function OpeningStage({ children }: { children: ReactNode }) {
       <noscript>
         <style>{`.opening-stage { height: auto !important; } .opening-stage .stage-frame { position: relative; height: auto; }`}</style>
       </noscript>
-      <div className="stage-frame">
+      <div className="stage-frame" data-renderer={motionEnabled && webglReady ? "webgl" : "fallback"}>
+        {motionEnabled && hasEntered ? <WeddingStageScene progress={scrollYProgress} onReady={setWebglReady} /> : null}
         <div className="stage-world" aria-hidden="true">
           <div className="stage-arch" />
           <WeddingMonogram className="stage-monogram" />
@@ -43,11 +53,11 @@ export function OpeningStage({ children }: { children: ReactNode }) {
 }
 
 export function ScrollReveal({ children, className = "" }: { children: ReactNode; className?: string }) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotionPreference();
 
   return (
     <motion.div
-      className={className}
+      className={`scroll-reveal ${className}`}
       initial={false}
       whileInView={reducedMotion ? undefined : { y: [18, 0] }}
       viewport={{ once: true, amount: 0.15 }}

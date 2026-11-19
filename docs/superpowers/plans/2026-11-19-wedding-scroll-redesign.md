@@ -15,7 +15,7 @@
 - Preserve all existing wedding content, `#loi-moi`, `#album`, `#dia-diem`, `#rsvp` and `/api/rsvp` behavior.
 - Two scenes on one scrolling page; desktop opening 170–190svh, phone opening 130–150svh.
 - Reduced motion and no JavaScript: readable static scenes without the extra animation scroll distance.
-- No new dependencies, invented couple photos, auto-playing audio or publishing.
+- No invented couple photos, auto-playing audio or publishing. The initial no-new-dependency choice for the opening is superseded by `2026-11-19-wedding-webgl-enhancement.md` following the clarified requirement for real 3D.
 - Minimum body 16px; visible focus, keyboard navigation and 44px interactive targets.
 
 ## Review Focus

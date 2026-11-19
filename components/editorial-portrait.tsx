@@ -1,14 +1,15 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { isPlaceholderPhoto, type GalleryMediaItem } from "@/lib/gallery-media-schema";
 import { WeddingMonogram } from "./wedding-monogram";
+import { useReducedMotionPreference } from "@/lib/use-reduced-motion";
 
 export function EditorialPortrait({ photo }: { photo: GalleryMediaItem }) {
   const frameRef = useRef<HTMLDivElement>(null);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotionPreference();
   const [failedSource, setFailedSource] = useState<string | null>(null);
   const { scrollYProgress } = useScroll({ target: frameRef, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-3%", "3%"]);

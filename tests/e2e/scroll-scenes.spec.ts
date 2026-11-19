@@ -21,7 +21,17 @@ test("curtains track scrolling and the invitation remains directly reachable", a
   await page.evaluate(() => window.scrollTo({ top: window.innerHeight * .5, behavior: "instant" }));
   await expect.poll(() => page.locator(".curtain-left").evaluate((element) => getComputedStyle(element).transform)).not.toBe(initial);
   await page.getByRole("navigation").getByRole("link", { name: "RSVP", exact: true }).click();
-  await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();
+  try {
+    await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();
+  } catch (error) {
+    console.log(await page.evaluate(() => ({
+      hash: location.hash, scroll: window.scrollY, viewport: [innerWidth, innerHeight],
+      rsvpTop: document.querySelector("#rsvp")?.getBoundingClientRect().top,
+      fieldTop: document.querySelector("#guestName")?.getBoundingClientRect().top,
+      renderer: document.querySelector(".stage-frame")?.getAttribute("data-renderer")
+    })));
+    throw error;
+  }
 });
 
 test("reduced motion removes extra scroll distance and keeps the opening readable", async ({ page }) => {

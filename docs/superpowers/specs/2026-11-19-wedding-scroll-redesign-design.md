@@ -34,7 +34,7 @@ Khi khách cuộn, hai cánh rèm tách dần sang hai bên, hé lộ biểu tư
 
 Đề xuất của người thiết kế: desktop dùng vùng mở màn khoảng 170–190svh với khung sân khấu sticky 100svh; điện thoại khoảng 130–150svh. Người triển khai chọn khoảng chính xác sau kiểm tra thực tế. Không chiếm quyền cuộn, không yêu cầu kéo chuột, không khóa trang khi animation đang chạy.
 
-Rèm và biểu tượng được tạo bằng CSS/SVG tại chỗ, có ánh sáng và chiều sâu vừa đủ; không cần một hệ thống dựng cảnh 3D. Chỉ các lớp trang trí mới có chuyển động.
+Sau phản hồi của người dùng về việc thiếu 3D, sân khấu được nâng lên WebGL/Three.js: rèm là lưới hình học có nếp gấp và vật liệu vải, mở ra cặp nhẫn vàng trong không gian vòm, với ánh sáng phản xạ và camera phối cảnh di chuyển theo cuộn. CSS/SVG giữ vai trò dự phòng khi WebGL không khả dụng, mất ngữ cảnh, JavaScript không chạy hoặc người xem yêu cầu giảm chuyển động.
 
 ### Màn 2 — Tạp chí ảnh cưới
 
@@ -62,7 +62,7 @@ Các màu là định hướng thị giác; người triển khai điều chỉn
 
 ## Chuyển động và khả năng truy cập
 
-Dùng Framer Motion đã cài để nối giá trị cuộn với `transform` và `opacity`. Các phần tạp chí chỉ hiện lên nhẹ trong lần xuất hiện đầu; không chuyển động lặp vô hạn. Không đọc kích thước DOM và cập nhật React state trên từng khung hình.
+Dùng giá trị cuộn của Framer Motion để điều khiển cảnh Three.js, đồng thời giữ các chuyển tiếp chữ và tạp chí. Các phần tạp chí chỉ hiện lên nhẹ trong lần xuất hiện đầu; không chuyển động lặp vô hạn. Không cập nhật React state trên từng khung hình. Giới hạn pixel ratio của canvas ở 1,5; ngừng render khi sân khấu ở ngoài màn hình hoặc tab bị ẩn; thu hồi geometry, material, texture, shadow map, renderer và các listener khi tháo component.
 
 Với `prefers-reduced-motion`, bỏ mở rèm, parallax và chiều dài cuộn dành riêng cho animation; cả hai màn hiển thị tĩnh theo thứ tự đọc. Không để nội dung bị ẩn nếu JavaScript chưa chạy hoặc không chạy. Trang, nút và form vẫn hoạt động trong lúc chuyển động.
 
@@ -70,7 +70,7 @@ Giữ skip link, heading có thứ bậc, focus rõ, nhãn form và thông báo 
 
 ## Cách triển khai và kiểm chứng
 
-Tiếp tục dùng Next.js 15, React 19, Tailwind, Framer Motion, Embla và Lucide hiện có. Phần chuyển động cuộn sở hữu trong component client nhỏ; nội dung và bố cục có thể giữ server rendering. Không thêm thư viện dựng 3D hay cuộn mượt.
+Tiếp tục dùng Next.js 15, React 19, Tailwind, Framer Motion, Embla và Lucide hiện có; bổ sung Three.js 0.187.0 cùng khai báo kiểu tương ứng để đáp ứng yêu cầu 3D thật. Renderer được tải riêng khi sân khấu vào màn hình. Phần chuyển động cuộn sở hữu trong component client nhỏ; nội dung và bố cục vẫn server-rendered. Không thêm thư viện cuộn mượt hay React Three Fiber.
 
 Kiểm tra tên/ngày/giờ/địa điểm, anchor đến RSVP và bản đồ, album có/không có ảnh/lỗi ảnh, form hợp lệ/không hợp lệ/lỗi kết nối, chế độ giảm chuyển động và bố cục 375/768/1440px. Kiểm chứng typecheck, các bài kiểm thử liên quan và production build.
 
@@ -84,7 +84,7 @@ Trình duyệt CUA hiện không khả dụng. Nếu tình trạng này tiếp d
 
 ## Tư liệu tham khảo
 
-Kết quả triển khai: 24/24 unit test, 32/32 kiểm thử trình duyệt desktop/mobile và production build đạt. Sau rà soát, đã sửa vị trí anchor khi mở trực tiếp RSVP bằng cách giữ ổn định chiều cao từ CSS ban đầu, và bảo đảm mọi liên kết menu có vùng bấm tối thiểu 44×44px. Tám kiểm thử liên quan được chạy thêm trên production build và đều đạt. Đã xem trực quan màn mở đầu, bìa tạp chí và RSVP trên Chrome. Không còn phát hiện quan trọng chưa xử lý.
+Kiểm chứng sau nâng cấp WebGL: 24/24 unit test, 44/44 kiểm thử trình duyệt và production build đạt. Mười kiểm thử cảnh 3D, lỗi GPU, đổi lựa chọn chuyển động và đường dẫn RSVP cũng đạt trên production build tách biệt. Đã xem ảnh render WebGL thực tế ở viewport desktop và điện thoại. Giữ ổn định chiều cao từ CSS ban đầu để native anchor không lệch sau hydration; mọi liên kết menu có vùng bấm tối thiểu 44×44px. Các phát hiện về shader và cập nhật giảm chuyển động từ rà soát đã được sửa và kiểm chứng. Không còn phát hiện quan trọng chưa xử lý.
 
 Ảnh thật chưa được cấu hình nên bìa hiển thị monogram và album thông báo đang chuẩn bị. Các kiểm thử RSVP dùng phản hồi giả lập; không gửi phản hồi thật vào Google Sheets. Mã nằm trong workspace hiện tại trên nhánh `codex/wedding-scroll-redesign`.
 
