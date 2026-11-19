@@ -2,6 +2,16 @@ import { describe, expect, it } from "vitest";
 import { createGalleryMediaItems, galleryMediaSchema, isManagedStorageUrl, isPlaceholderPhoto } from "@/lib/gallery-media-schema";
 
 describe("gallery media schema", () => {
+  it("labels local demo photos and automatically restores real photo metadata for storage", () => {
+    const sources = [{ storageObjectPath: "photo-01.jpg", localFallbackPath: "/images/demo/wedding-01.jpg", altText: "Ảnh thật của Minh và Hà", demoAltText: "Ảnh demo: lễ cưới ngoài trời", displayOrder: 1 }];
+    const [demo] = createGalleryMediaItems(sources);
+    expect(demo.isDemo).toBe(true);
+    expect(demo.altText).toBe(sources[0].demoAltText);
+    const [real] = createGalleryMediaItems(sources, "https://project.supabase.co/storage/v1/object/public/pre-wedding");
+    expect(real.isDemo).toBe(false);
+    expect(real.altText).toBe(sources[0].altText);
+    expect(real.publicUrl).toContain("/photo-01.jpg");
+  });
   it("recognizes temporary local artwork without treating real local or remote photos as placeholders", () => {
     expect(isPlaceholderPhoto("/images/pre-wedding/pre-wedding-01.svg")).toBe(true);
     expect(isPlaceholderPhoto("/images/pre-wedding/photo.jpg")).toBe(false);

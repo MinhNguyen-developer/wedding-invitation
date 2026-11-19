@@ -24,21 +24,24 @@ export const weddingContent = {
     [
       {
         storageObjectPath: "photo-01.jpg",
-        localFallbackPath: "/images/pre-wedding/pre-wedding-01.svg",
+        localFallbackPath: "/images/demo/wedding-01.jpg",
+        demoAltText: "Ảnh demo: cặp đôi trong lễ cưới ngoài trời",
         altText: "Minh và Hà trong khoảnh khắc tiền cưới dưới nắng chiều",
         caption: "Ngày nắng dịu",
         displayOrder: 1,
       },
       {
         storageObjectPath: "photo-02.jpg",
-        localFallbackPath: "/images/pre-wedding/pre-wedding-02.svg",
+        localFallbackPath: "/images/demo/wedding-02.jpg",
+        demoAltText: "Ảnh demo: cặp đôi và bó hoa cưới dưới nắng chiều",
         altText: "Minh và Hà trong khoảnh khắc tiền cưới bên hoa trắng",
         caption: "Một lời hẹn",
         displayOrder: 2,
       },
       {
         storageObjectPath: "photo-03.jpg",
-        localFallbackPath: "/images/pre-wedding/pre-wedding-03.svg",
+        localFallbackPath: "/images/demo/wedding-03.jpg",
+        demoAltText: "Ảnh demo: lối đi và vòm hoa trong khu vườn lễ cưới",
         altText: "Minh và Hà trong khoảnh khắc tiền cưới trong khu vườn",
         caption: "Cùng về một nhà",
         displayOrder: 3,
