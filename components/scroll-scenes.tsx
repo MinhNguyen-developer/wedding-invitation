@@ -4,7 +4,6 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { WeddingMonogram } from "./wedding-monogram";
-import { useReducedMotionPreference } from "@/lib/use-reduced-motion";
 
 const WeddingStageScene = dynamic(
   () => import("./wedding-stage-scene").then((module) => module.WeddingStageScene).catch(() => () => null),
@@ -13,7 +12,6 @@ const WeddingStageScene = dynamic(
 
 export function OpeningStage({ children }: { children: ReactNode }) {
   const stageRef = useRef<HTMLElement>(null);
-  const reducedMotion = useReducedMotionPreference();
   const [mounted, setMounted] = useState(false);
   const [webglReady, setWebglReady] = useState(false);
   const hasEntered = useInView(stageRef, { once: true });
@@ -23,7 +21,7 @@ export function OpeningStage({ children }: { children: ReactNode }) {
   const titleY = useTransform(scrollYProgress, [0, 0.85], [0, -36]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.35, 0.85], [1, 1, 0]);
   const pointerEvents = useTransform(scrollYProgress, (progress) => progress < 0.8 ? "auto" as const : "none" as const);
-  const motionEnabled = mounted && !reducedMotion;
+  const motionEnabled = mounted;
 
   useEffect(() => setMounted(true), []);
 
@@ -53,13 +51,11 @@ export function OpeningStage({ children }: { children: ReactNode }) {
 }
 
 export function ScrollReveal({ children, className = "" }: { children: ReactNode; className?: string }) {
-  const reducedMotion = useReducedMotionPreference();
-
   return (
     <motion.div
       className={`scroll-reveal ${className}`}
       initial={false}
-      whileInView={reducedMotion ? undefined : { y: [18, 0] }}
+      whileInView={{ y: [18, 0] }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >

@@ -242,10 +242,3 @@ textarea.form-control { min-height: 125px; resize: vertical; }
   .stage-title { font-size: 3.5rem; margin-block: 16px; }
   .stage-scroll { margin-top: 16px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
-  .opening-stage { height: auto; }
-  .opening-stage .stage-frame { position: relative; height: auto; }
-  .stage-content, .curtain, .portrait-image, .scroll-reveal { transform: none !important; }
-  .stage-content { opacity: 1 !important; pointer-events: auto !important; }
-}

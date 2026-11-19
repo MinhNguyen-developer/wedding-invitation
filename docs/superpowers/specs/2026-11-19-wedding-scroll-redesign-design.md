@@ -34,7 +34,7 @@ Khi khách cuộn, hai cánh rèm tách dần sang hai bên, hé lộ biểu tư
 
 Đề xuất của người thiết kế: desktop dùng vùng mở màn khoảng 170–190svh với khung sân khấu sticky 100svh; điện thoại khoảng 130–150svh. Người triển khai chọn khoảng chính xác sau kiểm tra thực tế. Không chiếm quyền cuộn, không yêu cầu kéo chuột, không khóa trang khi animation đang chạy.
 
-Sau phản hồi của người dùng về việc thiếu 3D, sân khấu được nâng lên WebGL/Three.js: rèm là lưới hình học có nếp gấp và vật liệu vải, mở ra cặp nhẫn vàng trong không gian vòm, với ánh sáng phản xạ và camera phối cảnh di chuyển theo cuộn. CSS/SVG giữ vai trò dự phòng khi WebGL không khả dụng, mất ngữ cảnh, JavaScript không chạy hoặc người xem yêu cầu giảm chuyển động.
+Sau phản hồi của người dùng về việc thiếu 3D, sân khấu được nâng lên WebGL/Three.js: rèm là lưới hình học có nếp gấp và vật liệu vải, mở ra cặp nhẫn vàng trong không gian vòm, với ánh sáng phản xạ và camera phối cảnh di chuyển theo cuộn. CSS/SVG giữ vai trò dự phòng khi WebGL không khả dụng, mất ngữ cảnh hoặc JavaScript không chạy.
 
 ### Màn 2 — Tạp chí ảnh cưới
 
@@ -64,7 +64,7 @@ Các màu là định hướng thị giác; người triển khai điều chỉn
 
 Dùng giá trị cuộn của Framer Motion để điều khiển cảnh Three.js, đồng thời giữ các chuyển tiếp chữ và tạp chí. Các phần tạp chí chỉ hiện lên nhẹ trong lần xuất hiện đầu; không chuyển động lặp vô hạn. Không cập nhật React state trên từng khung hình. Giới hạn pixel ratio của canvas ở 1,5; ngừng render khi sân khấu ở ngoài màn hình hoặc tab bị ẩn; thu hồi geometry, material, texture, shadow map, renderer và các listener khi tháo component.
 
-Với `prefers-reduced-motion`, bỏ mở rèm, parallax và chiều dài cuộn dành riêng cho animation; cả hai màn hiển thị tĩnh theo thứ tự đọc. Không để nội dung bị ẩn nếu JavaScript chưa chạy hoặc không chạy. Trang, nút và form vẫn hoạt động trong lúc chuyển động.
+Theo yêu cầu cập nhật ngày 20/11/2026, luôn bật WebGL, mở rèm, parallax, hiệu ứng xuất hiện và chuyển ảnh bất kể lựa chọn giảm chuyển động của thiết bị; bỏ kiểm tra `prefers-reduced-motion` trong JavaScript và CSS. Không để nội dung bị ẩn nếu JavaScript chưa chạy hoặc không chạy. Trang, nút và form vẫn hoạt động trong lúc chuyển động.
 
 Giữ skip link, heading có thứ bậc, focus rõ, nhãn form và thông báo trạng thái cho trình đọc màn hình. Các lớp rèm không chặn chuột và bị ẩn khỏi accessibility tree. Điều hướng cố định không che phần tử đang focus hay đích anchor. Nút có vùng bấm tối thiểu 44×44 CSS px; ảnh có mô tả phù hợp. Không có cuộn ngang ở 375px và khi xoay ngang.
 
@@ -83,6 +83,8 @@ Trình duyệt CUA hiện không khả dụng. Nếu tình trạng này tiếp d
 “Hai màn” được hiểu là hai cảnh nối tiếp trên cùng một trang cuộn, thay vì hai URL riêng. Phần tạp chí có thể dài hơn một viewport để chứa đủ thông tin và RSVP. Palette champagne / ivory / burgundy, kỹ thuật CSS/SVG cho rèm và phạm vi local repository là đề xuất đã được duyệt cùng bản thiết kế.
 
 ## Tư liệu tham khảo
+
+Kiểm chứng cập nhật ngày 20/11/2026: typecheck, 24/24 unit test và 44/44 kiểm thử trình duyệt đạt sau khi bỏ kiểm tra giảm chuyển động. WebGL và hiệu ứng cuộn vẫn hoạt động khi thiết bị bật giảm chuyển động; đổi lựa chọn khi đang xem không tháo canvas.
 
 Kiểm chứng sau nâng cấp WebGL: 24/24 unit test, 44/44 kiểm thử trình duyệt và production build đạt. Mười kiểm thử cảnh 3D, lỗi GPU, đổi lựa chọn chuyển động và đường dẫn RSVP cũng đạt trên production build tách biệt. Đã xem ảnh render WebGL thực tế ở viewport desktop và điện thoại. Giữ ổn định chiều cao từ CSS ban đầu để native anchor không lệch sau hydration; mọi liên kết menu có vùng bấm tối thiểu 44×44px. Các phát hiện về shader và cập nhật giảm chuyển động từ rà soát đã được sửa và kiểm chứng. Không còn phát hiện quan trọng chưa xử lý.
 

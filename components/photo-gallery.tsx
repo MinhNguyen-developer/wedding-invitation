@@ -9,16 +9,14 @@ import { SectionEyebrow } from "./ui";
 import { WeddingMonogram } from "./wedding-monogram";
 import { isPlaceholderPhoto } from "@/lib/gallery-media-schema";
 import { weddingContent } from "@/lib/wedding-content";
-import { useReducedMotionPreference } from "@/lib/use-reduced-motion";
 
 export function PhotoGallery() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
-  const reducedMotion = useReducedMotionPreference();
   const hasRealPhotos = weddingContent.gallery.some((photo) => !isPlaceholderPhoto(photo.publicUrl));
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(Boolean(reducedMotion)), [emblaApi, reducedMotion]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(Boolean(reducedMotion)), [emblaApi, reducedMotion]);
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;

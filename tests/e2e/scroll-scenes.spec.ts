@@ -5,6 +5,11 @@ test("editorial anchor sits just below navigation without exposing the previous 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await page.getByRole("link", { name: "Khám phá lời mời" }).click();
+  await expect.poll(async () => {
+    const cover = await page.locator("#thiep-cuoi").boundingBox();
+    const nav = await page.getByRole("navigation").boundingBox();
+    return cover!.y - (nav!.y + nav!.height);
+  }).toBeLessThanOrEqual(40);
   const cover = await page.locator("#thiep-cuoi").boundingBox();
   const nav = await page.getByRole("navigation").boundingBox();
   expect(cover!.y - (nav!.y + nav!.height)).toBeGreaterThanOrEqual(0);
@@ -34,15 +39,17 @@ test("curtains track scrolling and the invitation remains directly reachable", a
   }
 });
 
-test("reduced motion removes extra scroll distance and keeps the opening readable", async ({ page }) => {
+test("device reduced motion does not suppress scroll animations", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "static");
+  await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "enabled");
   const opening = await page.locator("#loi-moi").boundingBox();
   const frame = await page.locator(".stage-frame").boundingBox();
-  expect(Math.abs(opening!.height - frame!.height)).toBeLessThan(2);
+  expect(opening!.height).toBeGreaterThan(frame!.height);
   await expect(page.getByRole("heading", { level: 1, name: weddingContent.coupleNames })).toBeVisible();
-  await expect(page.locator(".stage-content")).toHaveCSS("opacity", "1");
+  const initial = await page.locator(".curtain-left").evaluate((element) => getComputedStyle(element).transform);
+  await page.evaluate(() => window.scrollTo({ top: window.innerHeight * .25, behavior: "instant" }));
+  await expect.poll(() => page.locator(".curtain-left").evaluate((element) => getComputedStyle(element).transform)).not.toBe(initial);
 });
 
 for (const viewport of [{ width: 375, height: 812 }, { width: 768, height: 1024 }, { width: 1440, height: 900 }, { width: 812, height: 375 }]) {

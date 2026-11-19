@@ -29,23 +29,28 @@ test("opening renders real WebGL and changes the scene when scrolled", async ({ 
   await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();
 });
 
-test("reduced motion keeps a readable static opening without a WebGL canvas", async ({ page }) => {
+test("WebGL stays active when device reduced motion is enabled", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "static");
-  await expect(page.locator(".stage-frame canvas")).toHaveCount(0);
+  await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "enabled");
+  await expect(page.locator(".stage-frame")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  await expect(page.locator(".stage-frame canvas")).toBeVisible();
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("changing motion preference releases and can restore the 3D renderer", async ({ page }) => {
+test("changing device preference does not interrupt the renderer", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator(".stage-frame")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  const canvas = await page.locator(".stage-frame canvas").elementHandle();
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await expect(page.locator(".stage-frame canvas")).toHaveCount(0);
-  await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "static");
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+  await expect(page.locator("#loi-moi")).toHaveAttribute("data-motion", "enabled");
+  await expect(page.locator(".stage-frame")).toHaveAttribute("data-renderer", "webgl");
+  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await expect(page.locator(".stage-frame")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  expect(await canvas!.evaluate((element) => element.isConnected)).toBe(true);
 });
 
 test("unavailable WebGL retains the fallback and RSVP navigation", async ({ page }) => {
