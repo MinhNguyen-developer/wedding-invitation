@@ -13,3 +13,5 @@ Ba ảnh demo cưới tải vào repository, ghi rõ ảnh minh họa, có ngu�
 DOM carousel hiện có giữ vai trò nội dung ngữ nghĩa, điều khiển vuốt và dự phòng khi WebGL không có, tải ảnh lỗi hoặc mất context. Canvas không chặn tương tác. Không có JavaScript vẫn xem được cả ba ảnh. Các nút ít nhất 44px, điều khiển được bằng bàn phím, không cuộn ngang trang ở 375px hoặc landscape.
 
 Kiểm chứng: dữ liệu demo/ảnh thật, ảnh lỗi; render canvas thật và thay đổi pixel theo tương tác; điều khiển album; thiếu/mất GPU; không JavaScript; bìa đổi phối cảnh khi cuộn; kiểm thử desktop/mobile, typecheck, unit và production build tách biệt.
+
+Kết quả: đã triển khai album WebGL và bìa CSS 3D; 25 unit test, 58 kiểm thử trình duyệt, 14 kiểm thử production, typecheck, lint và production build đạt. Đã kiểm tra ảnh chụp desktop/điện thoại và sửa lỗi cắt chú thích trong HTML fallback do lượt rà soát độc lập phát hiện.

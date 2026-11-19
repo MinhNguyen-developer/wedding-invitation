@@ -4,6 +4,8 @@ Ngày: 19/11/2026
 
 Trạng thái: Người dùng đã duyệt bằng “Hãy triển khai”; đã triển khai trên nhánh `codex/wedding-scroll-redesign`.
 
+Cập nhật ngày 20/11/2026: theo yêu cầu thêm 3D và dùng ảnh demo, phần album và quy tắc ảnh giữ chỗ bên dưới được thay thế bằng [thiết kế album 3D và ảnh demo](2026-11-20-wedding-album-3d-design.md).
+
 ## Mong muốn đã xác nhận
 
 Người dùng muốn thiết kế lại website hiện tại, lấy cảm hứng từ Cartier Watches & Wonders và Oryzo. Hai phẩm chất quan trọng nhất là **chuyển động khi cuộn** và **sự sang trọng**. Người dùng chọn kết hợp thành **hai màn: sân khấu mở màn và tạp chí ảnh cưới**.

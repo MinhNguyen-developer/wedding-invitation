@@ -10,7 +10,7 @@ vi.mock("@/lib/wedding-content", async (importOriginal) => {
     ...original,
     weddingContent: {
       ...original.weddingContent,
-      gallery: original.weddingContent.gallery.map((photo) => ({ ...photo, publicUrl: `https://example.com/${photo.storageObjectPath}` }))
+      gallery: original.weddingContent.gallery.map((photo) => ({ ...photo, isDemo: false, publicUrl: `https://example.com/${photo.storageObjectPath}` }))
     }
   };
 });

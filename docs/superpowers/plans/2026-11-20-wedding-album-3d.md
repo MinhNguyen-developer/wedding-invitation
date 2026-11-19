@@ -1,6 +1,6 @@
 # Wedding Album 3D Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add a real 3D photo album and dimensional editorial cover using clearly labelled replaceable demo photos.
 **Architecture:** Retain Embla for semantic gallery navigation and touch. Add a lazy Three.js album with the existing stage's shared canvas lifecycle; use Motion/CSS perspective for the cover.
@@ -26,16 +26,24 @@
 **Files:** `lib/gallery-media-schema.ts`, `lib/wedding-content.ts`, `public/images/demo/`, `docs/gallery-media.md`, `tests/unit/gallery-media-schema.test.ts`.
 **Interfaces:** `GalleryMediaItem.isDemo?: boolean`; source metadata `demoAltText?: string`. `createGalleryMediaItems` returns demo alt/flag only for local demo fallbacks and real alt/flag for configured Storage.
 
-- [ ] Add tests for local demo metadata and automatic switch to real storage metadata; run `npm test -- tests/unit/gallery-media-schema.test.ts`, expect failure on missing demo flag.
-- [ ] Download three bounded JPEG demo assets, inspect them, record sources; implement schema/content selection without changing storage object paths.
-- [ ] Run `npm test`, expect all passing; commit demo sources and metadata.
+- [x] Add tests for local demo metadata and automatic switch to real storage metadata; run `npm test -- tests/unit/gallery-media-schema.test.ts`, expect failure on missing demo flag.
+- [x] Download three bounded JPEG demo assets, inspect them, record sources; implement schema/content selection without changing storage object paths.
+- [x] Run `npm test`, expect all passing; commit demo sources and metadata.
 
 ### Task 2: Album scene and dimensional cover
 
 **Files:** `components/webgl-scene-canvas.tsx`, `components/wedding-stage-scene.tsx`, `components/gallery-scene.tsx`, `lib/wedding-album-3d.ts`, `components/photo-gallery.tsx`, `components/editorial-portrait.tsx`, `app/globals.css`, browser/gallery tests and README.
 **Interfaces:** Shared scene factory returns `{scene, camera, update(progress, pointerX, pointerY, aspect), dispose()}`; optional `ready` promise and `needsRender()` for asynchronous textures and settling selection. Gallery scene receives the stable photo array and selection MotionValue; semantic Embla remains authoritative.
 
-- [ ] Add browser tests for demo labels, real WebGL pixels changing on navigation/scroll, keyboard controls, GPU/texture fallback and CSS cover perspective; run focused new test against existing implementation, expect missing WebGL/cover transform failure.
-- [ ] Extract the existing renderer lifecycle, keep stage behavior, add texture-backed thick photo prints, cyclic selection interpolation and responsive camera. Animate cover layers with Motion transforms. Keep HTML images available for assistive technology and fallback.
-- [ ] Run focused browser tests, unit, typecheck, lint, full E2E and isolated production build; inspect desktop/mobile screenshots. Expect all passing and no runtime errors.
-- [ ] Get one fresh code review, resolve important findings with regression proof, commit and preserve the running user dev server.
+- [x] Add browser tests for demo labels, real WebGL pixels changing on navigation/scroll, keyboard controls, GPU/texture fallback and CSS cover perspective; run focused new test against existing implementation, expect missing WebGL/cover transform failure.
+- [x] Extract the existing renderer lifecycle, keep stage behavior, add texture-backed thick photo prints, cyclic selection interpolation and responsive camera. Animate cover layers with Motion transforms. Keep HTML images available for assistive technology and fallback.
+- [x] Run focused browser tests, unit, typecheck, lint, full E2E and isolated production build; inspect desktop/mobile screenshots. Expect all passing and no runtime errors.
+- [x] Get one fresh code review, resolve important findings with regression proof, commit and preserve the running user dev server.
+
+## Verified result
+
+- Demo metadata regression failed before the change and passed after; 25/25 unit tests pass.
+- Album test failed before implementation (no WebGL renderer); all 58 desktop/mobile E2E tests now pass.
+- Independent review found one important fallback caption clipping defect and no other findings. A bounds regression reproduced it, then passed after fitting image/caption inside the viewport. No unresolved review findings.
+- Native smooth anchor scrolling required the cover test to bring the portrait into the viewport before measuring scroll transforms; all 14 feature tests pass against the isolated production build.
+- Typecheck, lint and production build pass. Desktop/mobile render screenshots inspected; no page errors or horizontal overflow. The user dev server at port 3001 remains running. Branch retained for preview and further photo replacement.

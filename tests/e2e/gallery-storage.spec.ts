@@ -9,6 +9,7 @@ test("gallery keeps managed photo metadata without displaying temporary artwork 
   } else {
     const first = page.locator("[data-storage-object-path]").first();
     await expect(first).toHaveAttribute("data-storage-object-path", weddingContent.gallery[0].storageObjectPath);
-    await expect(first).toHaveAttribute("data-public-url", new RegExp(`${weddingContent.gallery[0].storageObjectPath.replace(".", "\\.")}$`));
+    await expect(first).toHaveAttribute("data-public-url", weddingContent.gallery[0].publicUrl);
+    if (weddingContent.gallery[0].isDemo) await expect(page.getByText("Ảnh minh họa · Album demo")).toBeVisible();
   }
 });

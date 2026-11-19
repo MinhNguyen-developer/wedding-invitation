@@ -12,7 +12,9 @@ npm run dev
 
 Open `http://127.0.0.1:3001`.
 
-The invitation opens with a real WebGL scene: folded champagne curtains, reflective gold wedding bands, an architectural alcove and a perspective camera controlled by scrolling. Three.js loads separately when the opening enters view. Animations remain enabled regardless of the device's reduced-motion setting. Rendering pauses offscreen and in hidden tabs; CSS/SVG remains available for unavailable/lost WebGL and no JavaScript. The editorial page, gallery, venue and RSVP retain their existing content and behavior. Real gallery photos appear when configured; otherwise, the cover uses the couple's monogram and the album shows a preparation message.
+The invitation opens with a real WebGL scene: folded champagne curtains, reflective gold wedding bands, an architectural alcove and a perspective camera controlled by scrolling. The album displays thick photographic prints in a lit 3D arc, with scroll-driven perspective and previous/next or swipe navigation. The editorial cover has a layered photo frame that tilts with scrolling and the pointer. Each Three.js scene loads separately as it enters view, pauses offscreen/in hidden tabs and falls back to HTML when WebGL fails. Animations remain enabled regardless of the device's reduced-motion setting.
+
+Three local stock demo photos are included and visibly labelled as illustrative images. Configure the existing gallery Storage base URL and upload `photo-01.jpg`, `photo-02.jpg`, `photo-03.jpg` to automatically replace them with real photos and remove demo labels. See [gallery media](docs/gallery-media.md) for local replacement and source credits. Venue content and the RSVP contract retain their existing behavior.
 
 ## Environment Variables
 
