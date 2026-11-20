@@ -5,6 +5,7 @@ import {
   TorusGeometry, type WebGLRenderer
 } from "three";
 import type { GalleryMediaItem } from "./gallery-media-schema";
+import { albumCamera, getAlbumImageSize } from "./album-frame";
 
 export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly GalleryMediaItem[]) {
   const scene = new Scene();
@@ -26,7 +27,7 @@ export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly Gal
     renderer.toneMappingExposure = 1.12;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFShadowMap;
-    const camera = new PerspectiveCamera(37, 1, 0.1, 160);
+    const camera = new PerspectiveCamera(albumCamera.fov, 1, 0.1, 160);
     scene.add(new HemisphereLight("#fff8e9", "#92765d", 3));
     const light = new SpotLight("#fff1d9", 155, 28, Math.PI / 3, 0.9, 2);
     light.castShadow = true;
@@ -68,11 +69,12 @@ export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly Gal
       scene.add(group);
       const dimensions = { width: 2.5, height: 3.5 };
       function size(aspect: number) {
-        dimensions.height = Math.min(3.5, 3.7 / aspect);
-        dimensions.width = dimensions.height * aspect;
+        const size = getAlbumImageSize(aspect);
+        dimensions.height = size.height;
+        dimensions.width = size.width;
         image.scale.set(dimensions.width, dimensions.height, 1);
         backing.scale.set(dimensions.width + .18, dimensions.height + .22, 1);
-        border.scale.set(dimensions.width + .22, dimensions.height + .26, 1);
+        border.scale.set(size.frameWidth, size.frameHeight, 1);
       }
       size(5 / 7);
       const ready = new Promise<void>((resolve) => {
@@ -126,15 +128,15 @@ export function createWeddingAlbum(renderer: WebGLRenderer, photos: readonly Gal
           materials.forEach((material) => { material.opacity = alpha; });
           const fit = portrait ? Math.min(.95, (aspect * 5.8 - .35) / (dimensions.width + .22)) : 1;
           group.scale.setScalar(Math.max(.25, fit));
-          group.position.set((portrait ? 0 : 1.48) + Math.sin(distance * 1.3) * (portrait ? 1.1 : 3.5), Math.abs(distance) * .35 - .08, -index * 9);
+          group.position.set((portrait ? 0 : albumCamera.desktopX) + Math.sin(distance * 1.3) * (portrait ? 1.1 : 3.5), Math.abs(distance) * .35 + albumCamera.targetY, -index * 9);
           group.rotation.set(pointerY * .025 + distance * .08, MathUtils.clamp(distance, -1, 1) * .65 + pointerX * .04, Math.sin(distance) * .09 * (index % 2 ? -1 : 1));
         });
         camera.aspect = aspect;
-        camera.position.set(pointerX * .13, .16 + Math.sin(focus * Math.PI) * .16 + pointerY * .08, travelZ + (portrait ? 8.8 : 8));
-        camera.lookAt(0, -.08, travelZ);
+        camera.position.set(pointerX * .13, albumCamera.eyeY + Math.sin(focus * Math.PI) * .16 + pointerY * .08, travelZ + (portrait ? albumCamera.portraitZ : albumCamera.desktopZ));
+        camera.lookAt(0, albumCamera.targetY, travelZ);
         camera.updateProjectionMatrix();
         light.position.set(-3, 6, travelZ + 5);
-        light.target.position.set(portrait ? 0 : 1.48, 0, travelZ - 2);
+        light.target.position.set(portrait ? 0 : albumCamera.desktopX, 0, travelZ - 2);
       }
     };
   } catch (error) {

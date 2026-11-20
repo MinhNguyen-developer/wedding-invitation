@@ -1,10 +1,10 @@
 import Link from "next/link";
 
-export function SiteNav({ onAlbum = false }: { onAlbum?: boolean }) {
-  const home = onAlbum ? "/" : "";
+export function SiteNav({ onAlbum = false, invitationPath = "/", albumHref = "/album" }: { onAlbum?: boolean; invitationPath?: string; albumHref?: string }) {
+  const home = onAlbum ? invitationPath : "";
   const links = [
     { href: `${home}#loi-moi`, label: "Lời mời" },
-    { href: "/album", label: "Album" },
+    { href: albumHref, label: "Album" },
     { href: `${home}#dia-diem`, label: "Địa điểm" },
     { href: `${home}#rsvp`, label: "RSVP" }
   ];

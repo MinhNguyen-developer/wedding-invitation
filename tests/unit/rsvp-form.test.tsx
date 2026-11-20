@@ -2,6 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { RsvpForm } from "@/components/rsvp-form";
+import { WeddingInvitation } from "@/components/wedding-invitation";
 import { renderWithProviders } from "./test-utils";
 
 const fetchMock = vi.fn();
@@ -17,6 +18,44 @@ async function enterName() {
 }
 
 describe("RsvpForm", () => {
+  it("switches the form to the new recipient when navigating between guest invitations", async () => {
+    const user = userEvent.setup();
+    const { rerender } = renderWithProviders(<WeddingInvitation />);
+    await user.type(screen.getByLabelText("Họ và tên"), "Tên ở thiệp chung");
+    rerender(<WeddingInvitation guestName="general" guestSlug="general" />);
+    expect(screen.getByLabelText("Họ và tên")).toHaveValue("general");
+    rerender(<WeddingInvitation guestName="bạn Hoàng Anh" guestSlug="ban-hoang-anh" />);
+    expect(screen.getByLabelText("Họ và tên")).toHaveValue("bạn Hoàng Anh");
+    await user.clear(screen.getByLabelText("Họ và tên"));
+    await user.type(screen.getByLabelText("Họ và tên"), "Tên đã chỉnh sửa");
+    rerender(<WeddingInvitation guestName="cô Hằng" guestSlug="co-hang" />);
+    expect(screen.getByLabelText("Họ và tên")).toHaveValue("cô Hằng");
+  });
+
+  it("prefills the invited guest name, submits it and keeps it after success", async () => {
+    fetchMock.mockResolvedValue(response(true, "Đã nhận phản hồi của bạn."));
+    const user = userEvent.setup();
+    renderWithProviders(<RsvpForm initialGuestName="bạn Hoàng Anh" />);
+    expect(screen.getByLabelText("Họ và tên")).toHaveValue("bạn Hoàng Anh");
+    await user.click(screen.getByRole("button", { name: "Gửi phản hồi" }));
+    await screen.findByRole("status");
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).guestName).toBe("bạn Hoàng Anh");
+    expect(screen.getByLabelText("Họ và tên")).toHaveValue("bạn Hoàng Anh");
+  });
+
+  it("allows editing a prefilled name and retains that edit if submission fails", async () => {
+    fetchMock.mockResolvedValue(response(false, "Vui lòng thử lại sau."));
+    const user = userEvent.setup();
+    renderWithProviders(<RsvpForm initialGuestName="cô Hằng" />);
+    const name = screen.getByLabelText("Họ và tên");
+    await user.clear(name);
+    await user.type(name, "Nguyễn Thị Hằng");
+    await user.click(screen.getByRole("button", { name: "Gửi phản hồi" }));
+    await screen.findByRole("alert");
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body).guestName).toBe("Nguyễn Thị Hằng");
+    expect(name).toHaveValue("Nguyễn Thị Hằng");
+  });
+
   it("prevents an unnamed RSVP and focuses the invalid field", async () => {
     const user = userEvent.setup();
     renderWithProviders(<RsvpForm />);

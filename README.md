@@ -16,7 +16,21 @@ The invitation opens with a real WebGL scene: folded champagne curtains, reflect
 
 Ten local stock demo photos are included and visibly labelled as illustrative images. Configure the existing gallery Storage base URL and upload `photo-01.jpg` through `photo-10.jpg` to automatically replace them with real photos and remove demo labels. A failed photo shows a placeholder without disabling the other 3D chapters. See [gallery media](docs/gallery-media.md) for local replacement and source credits. Venue content and the RSVP contract retain their existing behavior.
 
+The opening uses lightweight WebP posters rendered from the actual 3D curtains, so loading or re-entering the page keeps the same lighting and curtain shape. The rendered canvas becomes fully visible before the fallback fades away. Regenerate the desktop/portrait posters after changing the opening scene with `node scripts/render-stage-posters.mjs` while the local preview is running (an optional first argument selects another base URL).
+
+The album fades each complete HTML preview (background and framed photo together) over an already-rendered, opaque 3D scene. This lets the gold arch and floor appear gradually without fading two separate photo layers or abruptly replacing the background. Portrait layouts retain the same photo and caption positions throughout the handoff.
+
 ## Environment Variables
+
+### Personal invitations
+
+Open `/tao-link` and paste guest names/addresses, one per line (for example `bạn Hoàng Anh`, then `cô Hằng` on the next line). Create up to 100 guests per batch; empty lines are ignored and identical normalized names are combined. Copy each link separately or use “Sao chép tất cả” to copy names paired with their links. The recipient opens `/for/ban-hoang-anh` and sees `Thân mời bạn Hoàng Anh`. Any name can be entered; there is no hardcoded guest list.
+
+Guest names persist in a separate `GuestLinks` worksheet of the existing Google spreadsheet, created on the first successful write. `GOOGLE_SHEETS_GUESTS_SHEET_NAME` can select another worksheet. Repeated names reuse their link; different names with the same unaccented slug receive an ID suffix. Keep the generated ID/slug columns intact and do not sort or delete worksheet rows while a link is being created. RSVP stays in its existing worksheet.
+
+Personal invitation pages prefill the RSVP name with the saved guest name/address. Guests can edit it before submitting. A successful submission resets the personal form to that invitation's name; the generic invitation still starts and resets with a blank name. Switching to a different guest invitation initializes a new form for that recipient.
+
+The generator and its write API have no authentication, as requested by the owner. Anyone who can reach `/tao-link` can create invitations. It is not part of the guest navigation. Moving to a hosted domain requires the same Google Sheets credentials; generated links use the domain where the generator is opened. Batch names are validated before any write and saved together through the Sheets API.
 
 ```text
 NEXT_PUBLIC_SUPABASE_STORAGE_PUBLIC_BASE_URL=

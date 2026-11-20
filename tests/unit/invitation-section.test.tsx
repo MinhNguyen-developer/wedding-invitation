@@ -6,6 +6,12 @@ import { weddingContent } from "@/lib/wedding-content";
 import { renderWithProviders } from "./test-utils";
 
 describe("InvitationSection", () => {
+  it("shows the exact personal greeting on the opening stage", () => {
+    renderWithProviders(<InvitationSection guestName="bạn Hoàng Anh" />);
+    const opening = screen.getByRole("region", { name: "Mở thiệp cưới" });
+    expect(within(opening).getByText("Thân mời bạn Hoàng Anh")).toBeInTheDocument();
+  });
+
   it("renders Vietnamese invitation content and required event details", () => {
     renderWithProviders(
       <>

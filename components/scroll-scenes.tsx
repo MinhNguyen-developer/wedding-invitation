@@ -27,19 +27,23 @@ export function OpeningStage({ children }: { children: ReactNode }) {
 
   return (
     <section ref={stageRef} id="loi-moi" aria-label="Mở thiệp cưới" className="opening-stage" data-motion={motionEnabled ? "enabled" : "static"}>
+      <link rel="preload" as="image" href="/images/stage/closed-desktop.webp" media="(min-aspect-ratio: 9/10)" />
+      <link rel="preload" as="image" href="/images/stage/closed-portrait.webp" media="(max-aspect-ratio: 9/10)" />
       <noscript>
         <style>{`.opening-stage { height: auto !important; } .opening-stage .stage-frame { position: relative; height: auto; }`}</style>
       </noscript>
       <div className="stage-frame" data-renderer={motionEnabled && webglReady ? "webgl" : "fallback"}>
         {motionEnabled && hasEntered ? <WeddingStageScene progress={scrollYProgress} onReady={setWebglReady} /> : null}
-        <div className="stage-world" aria-hidden="true">
-          <div className="stage-arch" />
-          <WeddingMonogram className="stage-monogram" />
-          <span className="stage-world-caption">Một lời hẹn. Một đời bên nhau.</span>
-        </div>
-        <div className="curtain-scene" aria-hidden="true">
-          <motion.div className="curtain curtain-left" style={{ x: motionEnabled ? left : 0 }} />
-          <motion.div className="curtain curtain-right" style={{ x: motionEnabled ? right : 0 }} />
+        <div className="stage-fallback" aria-hidden="true">
+          <div className="stage-world">
+            <div className="stage-arch" />
+            <WeddingMonogram className="stage-monogram" />
+            <span className="stage-world-caption">Một lời hẹn. Một đời bên nhau.</span>
+          </div>
+          <div className="curtain-scene">
+            <motion.div className="curtain curtain-left" style={{ x: motionEnabled ? left : 0 }} />
+            <motion.div className="curtain curtain-right" style={{ x: motionEnabled ? right : 0 }} />
+          </div>
         </div>
         <motion.div className="stage-content" style={motionEnabled ? { y: titleY, opacity: titleOpacity, pointerEvents } : undefined}>
           {children}

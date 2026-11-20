@@ -43,9 +43,9 @@ function normalizePrivateKey(value: string): string {
   return privateKey;
 }
 
-function getSheetRange(sheetName: string): string {
+export function getSheetRange(sheetName: string, cells = "A:E"): string {
   const escapedSheetName = sheetName.replaceAll("'", "''");
-  return `'${escapedSheetName}'!A:E`;
+  return `'${escapedSheetName}'!${cells}`;
 }
 
 function formatSubmittedAt(date: Date): string {
@@ -66,9 +66,8 @@ function formatSubmittedAt(date: Date): string {
   return `${parts.hour}:${parts.minute} ${parts.day}-${parts.month}-${parts.year}`;
 }
 
-export async function appendRsvpResponse(input: GoogleSheetsRsvp) {
+export function getGoogleSheetsClient() {
   const spreadsheetId = requiredEnv("GOOGLE_SHEETS_SPREADSHEET_ID");
-  const sheetName = requiredEnv("GOOGLE_SHEETS_SHEET_NAME");
   const clientEmail = requiredEnv("GOOGLE_SERVICE_ACCOUNT_EMAIL");
   const privateKey = normalizePrivateKey(
     requiredEnv("GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY"),
@@ -82,6 +81,12 @@ export async function appendRsvpResponse(input: GoogleSheetsRsvp) {
     scopes: [SHEETS_SCOPE],
   });
   const sheets = google.sheets({ version: "v4", auth });
+  return { sheets, spreadsheetId };
+}
+
+export async function appendRsvpResponse(input: GoogleSheetsRsvp) {
+  const { sheets, spreadsheetId } = getGoogleSheetsClient();
+  const sheetName = requiredEnv("GOOGLE_SHEETS_SHEET_NAME");
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,

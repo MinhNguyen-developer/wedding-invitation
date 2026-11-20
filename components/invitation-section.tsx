@@ -4,13 +4,13 @@ import { OpeningStage, ScrollReveal } from "./scroll-scenes";
 import { SectionEyebrow } from "./ui";
 import { weddingContent } from "@/lib/wedding-content";
 
-export function InvitationSection() {
+export function InvitationSection({ guestName, albumHref = "/album" }: { guestName?: string; albumHref?: string }) {
   const [groom, bride] = weddingContent.coupleNames.split(" & ");
 
   return (
     <>
       <OpeningStage>
-        <p className="stage-eyebrow">Trân trọng kính mời</p>
+        {guestName ? <p className="stage-guest-greeting">Thân mời {guestName}</p> : <p className="stage-eyebrow">Trân trọng kính mời</p>}
         <h1 className="stage-title" aria-label={weddingContent.coupleNames}>
           <span>{groom}</span><em>&</em><span>{bride}</span>
         </h1>
@@ -31,7 +31,7 @@ export function InvitationSection() {
                 <span>{groom}</span><em>&</em><span>{bride}</span>
               </h2>
               <p className="cover-deck">Từ hôm nay,<br /><em>và mãi về sau.</em></p>
-              <a href="/album" className="text-link">Những khoảnh khắc của chúng mình</a>
+              <a href={albumHref} className="text-link">Những khoảnh khắc của chúng mình</a>
             </ScrollReveal>
             <figure className="cover-figure">
               <EditorialPortrait photo={weddingContent.gallery[0]} />

@@ -8,7 +8,7 @@ import { PrimaryButton, SectionEyebrow, TextArea, TextInput } from "./ui";
 import { rsvpRequestSchema, type RsvpRequest, type RsvpResponse } from "@/lib/rsvp-schema";
 import { weddingContent } from "@/lib/wedding-content";
 
-export function RsvpForm() {
+export function RsvpForm({ initialGuestName = "" }: { initialGuestName?: string }) {
   const [result, setResult] = useState<RsvpResponse | null>(null);
   const {
     register,
@@ -20,7 +20,7 @@ export function RsvpForm() {
   } = useForm<RsvpRequest>({
     resolver: zodResolver(rsvpRequestSchema),
     defaultValues: {
-      guestName: "",
+      guestName: initialGuestName,
       attendanceStatus: "attending",
       attendeeCount: 1,
       message: "",
@@ -47,7 +47,7 @@ export function RsvpForm() {
 
       if (body.ok) {
         reset({
-          guestName: "",
+          guestName: initialGuestName,
           attendanceStatus: "attending",
           attendeeCount: 1,
           message: "",

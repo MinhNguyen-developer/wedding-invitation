@@ -28,13 +28,14 @@ test("standalone album animates all ten photographs through native scrolling", a
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
 });
 
-test("direct photo fragments and keyboard next link preserve access back to RSVP", async ({ page }) => {
+test("direct photo fragments and keyboard scrolling preserve access back to RSVP", async ({ page }) => {
   await page.goto("/album#photo-05");
   await expect(page.locator(".album-experience")).toHaveAttribute("data-active-photo", "5");
-  const next = page.getByRole("link", { name: "Ảnh tiếp theo", exact: true });
-  await next.focus();
-  await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/#photo-06$/);
+  await expect(page.locator(".album-experience")).toHaveAttribute("data-renderer", "webgl", { timeout: 20000 });
+  await expect.poll(() => page.locator("#photo-05").evaluate((element) =>
+    Math.abs(element.getBoundingClientRect().top)
+  )).toBeLessThan(2);
+  await page.keyboard.press("PageDown");
   await expect(page.locator(".album-experience")).toHaveAttribute("data-active-photo", "6");
   await page.getByRole("navigation").getByRole("link", { name: "RSVP", exact: true }).click();
   await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();

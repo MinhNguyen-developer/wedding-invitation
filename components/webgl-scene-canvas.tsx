@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import type { MotionValue } from "framer-motion";
 import { WebGLRenderer, type PerspectiveCamera, type Scene } from "three";
 
@@ -13,11 +13,12 @@ export type WeddingScene = {
 };
 export type WeddingSceneFactory = (renderer: WebGLRenderer) => WeddingScene;
 
-export function WebGLSceneCanvas({ progress, onReady, createScene, className }: {
+export function WebGLSceneCanvas({ progress, onReady, createScene, className, interactionRef }: {
   progress: MotionValue<number>;
   onReady: (ready: boolean) => void;
   createScene: WeddingSceneFactory;
   className: string;
+  interactionRef?: RefObject<HTMLElement | null>;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -25,6 +26,7 @@ export function WebGLSceneCanvas({ progress, onReady, createScene, className }: 
     const canvas = canvasRef.current;
     const host = canvas?.parentElement;
     if (!canvas || !host) return;
+    const interactionHost = interactionRef?.current ?? host;
     let renderer: WebGLRenderer;
     let stage: WeddingScene;
 
@@ -93,8 +95,9 @@ export function WebGLSceneCanvas({ progress, onReady, createScene, className }: 
     function movePointer(event: PointerEvent) {
       if (event.pointerType === "touch") return;
       rect = host!.getBoundingClientRect();
-      targetX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-      targetY = -((event.clientY - rect.top) / rect.height - 0.5) * 2;
+      if (!rect.width || !rect.height) return;
+      targetX = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width - 0.5) * 2));
+      targetY = Math.max(-1, Math.min(1, -((event.clientY - rect.top) / rect.height - 0.5) * 2));
       requestRender();
     }
 
@@ -130,8 +133,8 @@ export function WebGLSceneCanvas({ progress, onReady, createScene, className }: 
       }
     });
     intersectionObserver.observe(host);
-    host.addEventListener("pointermove", movePointer, { passive: true });
-    host.addEventListener("pointerleave", leavePointer);
+    interactionHost.addEventListener("pointermove", movePointer, { passive: true });
+    interactionHost.addEventListener("pointerleave", leavePointer);
     document.addEventListener("visibilitychange", visibilityChanged);
     canvas.addEventListener("webglcontextlost", contextLost);
     resize();
@@ -156,8 +159,8 @@ export function WebGLSceneCanvas({ progress, onReady, createScene, className }: 
       unsubscribe();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
-      host!.removeEventListener("pointermove", movePointer);
-      host!.removeEventListener("pointerleave", leavePointer);
+      interactionHost.removeEventListener("pointermove", movePointer);
+      interactionHost.removeEventListener("pointerleave", leavePointer);
       document.removeEventListener("visibilitychange", visibilityChanged);
       canvas!.removeEventListener("webglcontextlost", contextLost);
       stage.dispose();
@@ -170,7 +173,7 @@ export function WebGLSceneCanvas({ progress, onReady, createScene, className }: 
       cleanup();
       onReady(false);
     };
-  }, [progress, onReady, createScene]);
+  }, [progress, onReady, createScene, interactionRef]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }
