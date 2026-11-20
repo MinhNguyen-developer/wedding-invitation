@@ -10,13 +10,13 @@ test("guest sees validation and success states for RSVP", async ({ page }) => {
   });
 
   await page.goto("/");
-  await page.getByRole("link", { name: /RSVP/ }).click();
+  await page.getByRole("navigation").getByRole("link", { name: "RSVP", exact: true }).click();
   await page.getByRole("button", { name: /Gửi phản hồi/ }).click();
   await expect(page.getByText("Vui lòng nhập họ và tên.")).toBeVisible();
 
   await page.getByLabel("Họ và tên").fill("Nguyễn Văn A");
   await page.getByLabel(/Số lượng người tham dự/).fill("2");
-  await page.getByPlaceholder("Chúc hai bạn trăm năm hạnh phúc...").fill("Chúc hai bạn hạnh phúc mãi mãi");
+  await page.getByLabel("Lời nhắn yêu thương", { exact: true }).fill("Chúc hai bạn hạnh phúc mãi mãi");
   await page.getByRole("button", { name: /Gửi phản hồi/ }).click();
 
   await expect(page.getByText("Cảm ơn bạn đã phản hồi lời mời.")).toBeVisible();

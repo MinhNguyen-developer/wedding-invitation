@@ -15,15 +15,21 @@ export const galleryMediaSchema = z.object({
     }),
   altText: z.string().trim().min(1, "Alt text is required."),
   caption: z.string().trim().optional(),
-  displayOrder: z.number().int().positive()
+  displayOrder: z.number().int().positive(),
+  isDemo: z.boolean().optional()
 });
 
 export const galleryMediaItemsSchema = z.array(galleryMediaSchema).min(1, "At least one gallery image is required.");
 
 export type GalleryMediaItem = z.infer<typeof galleryMediaSchema>;
 
+export function isPlaceholderPhoto(publicUrl: string): boolean {
+  return publicUrl.startsWith("/images/pre-wedding/") && publicUrl.endsWith(".svg");
+}
+
 type GalleryMediaSource = Omit<GalleryMediaItem, "publicUrl"> & {
   localFallbackPath: string;
+  demoAltText?: string;
 };
 
 export function createGalleryMediaItems(
@@ -34,9 +40,11 @@ export function createGalleryMediaItems(
 
   return galleryMediaItemsSchema
     .parse(
-      items.map(({ localFallbackPath, storageObjectPath, ...item }) => ({
+      items.map(({ localFallbackPath, storageObjectPath, demoAltText, ...item }) => ({
         ...item,
         storageObjectPath,
+        isDemo: !normalizedStorageBaseUrl && Boolean(demoAltText),
+        altText: !normalizedStorageBaseUrl && demoAltText ? demoAltText : item.altText,
         publicUrl: normalizedStorageBaseUrl
           ? `${normalizedStorageBaseUrl}/${storageObjectPath}`
           : localFallbackPath

@@ -5,14 +5,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#252525",
-        rosewood: "#8f3d4f",
-        petal: "#f7d9dc",
-        ivory: "#fffaf2",
-        sage: "#667562",
-        gold: "#76512f",
-        paper: "#fffdf9",
-        sand: "#f4ece4"
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        rosewood: "rgb(var(--color-burgundy) / <alpha-value>)",
+        petal: "rgb(var(--color-petal) / <alpha-value>)",
+        ivory: "rgb(var(--color-ivory) / <alpha-value>)",
+        sage: "rgb(var(--color-sage) / <alpha-value>)",
+        gold: "rgb(var(--color-gold) / <alpha-value>)",
+        paper: "rgb(var(--color-paper) / <alpha-value>)",
+        sand: "rgb(var(--color-champagne) / <alpha-value>)"
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],

@@ -1,18 +1,13 @@
 import { expect, test } from "@playwright/test";
+import { weddingContent } from "../../lib/wedding-content";
 
-test("gallery exposes managed storage metadata for approved pre-wedding images", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("link", { name: /Album/ }).click();
-
-  const firstGalleryItem = page.locator("[data-storage-object-path]").first();
-  await expect(firstGalleryItem).toHaveAttribute("data-storage-object-path", "photo-01.jpg");
-
-  const publicUrl = await firstGalleryItem.getAttribute("data-public-url");
-  expect(publicUrl).toBeTruthy();
-
-  if (process.env.NEXT_PUBLIC_SUPABASE_STORAGE_PUBLIC_BASE_URL) {
-    expect(publicUrl).toContain(".supabase.co/storage/v1/object/public/pre-wedding/photo-01.jpg");
-  } else {
-    expect(publicUrl).toBe("/images/pre-wedding/pre-wedding-01.svg");
+test("all separate album photos preserve replaceable storage metadata", async ({ page }) => {
+  await page.goto("/album");
+  const photos = page.locator(".album-photo");
+  await expect(photos).toHaveCount(10);
+  for (const [index, photo] of weddingContent.gallery.entries()) {
+    await expect(photos.nth(index)).toHaveAttribute("data-storage-object-path", photo.storageObjectPath);
+    await expect(photos.nth(index)).toHaveAttribute("data-public-url", photo.publicUrl);
   }
+  if (weddingContent.gallery[0].isDemo) await expect(page.getByText("Ảnh minh họa · Album demo")).toBeVisible();
 });

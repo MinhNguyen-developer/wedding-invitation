@@ -1,35 +1,19 @@
-import { screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { fireEvent, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { PhotoGallery } from "@/components/photo-gallery";
-import { weddingContent } from "@/lib/wedding-content";
 import { renderWithProviders } from "./test-utils";
 
-vi.mock("embla-carousel-react", () => ({
-  default: () => [
-    vi.fn(),
-    {
-      selectedScrollSnap: () => 0,
-      on: vi.fn(),
-      off: vi.fn(),
-      scrollPrev: vi.fn(),
-      scrollNext: vi.fn()
-    }
-  ]
-}));
-
-describe("PhotoGallery", () => {
-  it("renders gallery images in display order with captions and alt text", () => {
+describe("PhotoGallery preview", () => {
+  it("opens a dedicated album instead of repeating the photos on the invitation", () => {
     renderWithProviders(<PhotoGallery />);
-
-    for (const photo of weddingContent.gallery) {
-      expect(screen.getByAltText(photo.altText)).toBeInTheDocument();
-      if (photo.caption) {
-        expect(screen.getByText(photo.caption)).toBeInTheDocument();
-      }
-      expect(screen.getByAltText(photo.altText)).toHaveAttribute("src", photo.publicUrl);
-    }
-
-    expect(screen.getByRole("button", { name: "Ảnh trước" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Ảnh tiếp theo" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Khám phá album" })).toHaveAttribute("href", "/album");
+    expect(screen.getAllByRole("img")).toHaveLength(1);
+    expect(screen.getByText(/10 khung hình/)).toBeInTheDocument();
+  });
+  it("keeps the album link usable when its preview photo cannot load", () => {
+    renderWithProviders(<PhotoGallery />);
+    fireEvent.error(screen.getByRole("img"));
+    expect(screen.getByRole("link", { name: "Khám phá album" })).toHaveAttribute("href", "/album");
+    expect(screen.getByText("Một lời hẹn, một đời bên nhau.")).toBeInTheDocument();
   });
 });

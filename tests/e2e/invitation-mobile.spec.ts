@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { weddingContent } from "../../lib/wedding-content";
 
-test.use({ viewport: { width: 390, height: 844 } });
+test.use({ viewport: { width: 375, height: 812 } });
 
-test("invitation remains readable on mobile", async ({ page }) => {
+test("invitation stays readable and RSVP stays reachable on a small phone", async ({ page }) => {
   await page.goto("/");
-
-  await expect(page.getByRole("heading", { name: "Minh & Hà" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /RSVP/ })).toBeVisible();
-  await expect(page.getByText("White Palace")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: weddingContent.coupleNames })).toBeInViewport();
+  await page.getByRole("navigation").getByRole("link", { name: "RSVP", exact: true }).click();
+  await expect(page.getByLabel("Họ và tên", { exact: true })).toBeInViewport();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
